@@ -40,7 +40,7 @@ async def home():
     return response
 
 # info 8 values for filter and return response
-@app.get("/api/get/infoFilter/")
+@app.get("/api/get/infoFilter/") # 127.0.0.1/api/get/infoFilter/
 async def inputInfoFilterRequest(filename:Union[str,None]= Query(default="", max_length=40),
                               width:Union[int,None] = Query(default=0),
                               height:Union[int,None] = Query(default=0),
