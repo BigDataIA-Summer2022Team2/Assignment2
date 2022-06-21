@@ -37,14 +37,18 @@ def showRandomImg():
         </html>
     """
     response=data1+html_img+data2
-    return response
-
-
+    return response  
 
 
 def getS3BucketBody(imgName):
+    """
+    It takes an image name as input, and returns the image body from the S3 bucket
     
+    :param imgName: The name of the image you want to get from S3
+    :return: The image is being returned as a byte stream.
+    """
     
+
     
     #check image
     
