@@ -6,6 +6,7 @@
 > 
 > Meihu Qin NUID: 002190486
 
+# Todo: Change this README file for Assignemnt 2
 ## 1. Intro
 
 - Assignment 1 is a very easy way to understand what a real-life python project looks like
