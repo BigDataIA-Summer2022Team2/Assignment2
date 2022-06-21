@@ -93,7 +93,7 @@ async def aircraftClassAndFileNameRequest(className:str,
 @app.get("/api/get/imgSizeRange/")
 async def imgSzieRangeRequest(width:Union[int,None] = Query(default=0),
                               height:Union[int,None] = Query(default=0)):
-    
+     
     logger.info('=============== API start ===============')
     logger.info('mode: HTTP GET')
     logger.info('Function start time: {tiems}',tiems=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())))
