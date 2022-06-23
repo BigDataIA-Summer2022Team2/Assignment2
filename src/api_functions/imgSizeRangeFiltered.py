@@ -7,6 +7,13 @@ import boto3
 # @Author: Cheng Wang
 # @UpdateDate: 6/12/2022
 def getimgSizeRangeFilteredResult(width=0,height=0):
+    """
+    It takes in a width and height, and returns a dictionary of all the images in the S3 bucket that are
+    smaller than the width and height
+    
+    :param width: The minimum width of the image, defaults to 0 (optional)
+    :param height: The height of the image you want to filter by, defaults to 0 (optional)
+    """
     key = 'csv/combined.csv'
     abs_path = os.path.dirname(os.path.dirname((os.path.abspath(__file__))))
     csv_path = abs_path+"\\credentials\\aws_s3_credentials.json"

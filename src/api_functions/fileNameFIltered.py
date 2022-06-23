@@ -56,8 +56,7 @@ def getFileNameCsvInfo(filename: str):
                 result[str(index_no)] = {}
                 for j in range(len(inner_index_num)):  # ? 8 elements
                     # i = 0      |      j = 0 - 7
-                    result[str((index_no))][header_list[j]
-                                            ] = csv_header_value_list[i][j]
+                    result[str((index_no))][header_list[j]] = csv_header_value_list[i][j]
 
     return result
 
