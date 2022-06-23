@@ -55,7 +55,7 @@ async def inputInfoFilterRequest(filename:Union[str,None]= Query(default="", max
     funcName = getattr(getS3BucketBody.getS3BucketBodyInfo,'__name__') # return function name which is called
     logger.info('Call: {interface}',interface=funcName)
     
-    className = className.upper()
+    className = className.upper() #v22 V22
     response = getS3BucketBody.getS3BucketBodyInfo(filename,width,height,className,xmin,ymin,xmax,ymax) # get return response
     
     if(response == {}):
@@ -216,7 +216,6 @@ async def getPandasCsvOutputHtmlPage():
 # display pandas profling img info html output
 @app.get("/pandas/html/image/", response_class=HTMLResponse)
 async def getPandasImageOutputHtmlPage():
-
     logger.info('=============== API start ===============')
 
     funcName = getattr(displayPandasImagesHtmlOutput.getPandasProfilingImageHtmlOutput,'__name__')
@@ -250,7 +249,8 @@ async def getModelCardOutputHtmlPage():
 
     return response
 
-#Todo
+#Todo 
+# Bug
 # display random image and its info
 @app.get("/display/image/", response_class=HTMLResponse)
 async def displayImageInHTML():
