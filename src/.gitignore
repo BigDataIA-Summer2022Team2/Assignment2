@@ -1,1 +1,2 @@
-credentials/
+credentials/s3.json
+credentials/aws_s3_credentials.json
