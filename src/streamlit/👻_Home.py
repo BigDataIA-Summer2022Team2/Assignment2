@@ -31,7 +31,7 @@ st.markdown(markdown_info)
 # display home page img cover
 def showHomePageImgCover():
     file_path = os.path.dirname(os.path.dirname((os.path.abspath(__file__))))
-    img_path = file_path + "\\0041e69431bf872309d1aff628b6494f.jpg"
+    img_path = file_path + "/0041e69431bf872309d1aff628b6494f.jpg"
 
     open_img = Image.open(img_path)
     img_data = np.asarray(open_img)
