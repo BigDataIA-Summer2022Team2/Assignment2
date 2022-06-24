@@ -1,10 +1,3 @@
-import streamlit as st
-
-
-
-st.sidebar.markdown("# API Functions Document")
-
-guide_info="""
 # API Guide
 > ***Tips***
 > - If you start FastAPI on your own machine, default documentation url will be: `http://127.0.0.1:8000/docs`
@@ -388,8 +381,3 @@ curl -X 'GET' \
 - Pass
 ### 12.3 Sample Response
 - It will return a HTML format page info
-"""
-
-st.markdown(guide_info)
-
-
