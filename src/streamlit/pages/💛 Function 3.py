@@ -8,15 +8,19 @@ st.markdown("## Try it :smile:")
 col1,col2 = st.columns(2)
 
 def w_text_input_to_slider():
-    
-    st.session_state.w_slider = int(st.session_state.w_text_input) # "400" -> 400
+    if(st.session_state.w_text_input == ""):
+        st.session_state.w_slider = 0
+    else:
+        st.session_state.w_slider = int(st.session_state.w_text_input) # "400" -> 400
 def w_slider_to_text_input():
     st.session_state.w_text_input = str(st.session_state.w_slider)
 
 
 def h_text_input_to_slider():
-    
-    st.session_state.h_slider = int(st.session_state.h_text_input) # "400" -> 400
+    if(st.session_state.h_text_input == ""):
+        st.session_state.h_slider = 0
+    else:
+        st.session_state.h_slider = int(st.session_state.h_text_input) # "400" -> 400
 def h_slider_to_text_input():
     st.session_state.h_text_input = str(st.session_state.h_slider)
 
@@ -27,7 +31,6 @@ with col1:
 with col2:
     height = st.text_input("Height",key="h_text_input",on_change=h_text_input_to_slider)
     height_slider = st.slider('Pick a height number', 0, 9999,key="h_slider",on_change=h_slider_to_text_input)
-
 
 
 def getFastAPIResponse(): #data_bin
@@ -46,7 +49,9 @@ if(width_slider == 0):
 if(height_slider == 0):
     st.warning('Height value is required.')
 
-isClick = st.button("Show hint")
+
+isClick = st.button("Show Hint")    
+
 if(isClick == True):
     
     st.markdown("## Sample Input")

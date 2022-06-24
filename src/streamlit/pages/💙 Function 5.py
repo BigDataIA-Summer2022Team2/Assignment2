@@ -2,8 +2,8 @@ import streamlit as st
 import requests
 import time
 
-st.sidebar.markdown("# Function 2")
-st.markdown("# Function 2")
+st.sidebar.markdown("# Function 111")
+st.markdown("# Function 111")
 st.markdown("## Try it :smile:")
 
 col1,col2 = st.columns(2)
@@ -31,10 +31,27 @@ else:
     st.warning('Class value is required.')
 
 
+if ('count' and 'Function2boolean') not in st.session_state:
+    st.session_state.count = 0
+    st.session_state.Function2boolean = False
+    
+def buttonNameChange():
+    if(st.session_state.Function2boolean == True):
+        return 'Hide Hint'
+    else:
+        return 'Show Hint'
+    
+def buttonStateCheck():
+    st.session_state.count += 1
+    if(st.session_state.count % 2 == 1):
+        st.session_state.Function2boolean = True
+    else:
+        st.session_state.Function2boolean = False
+    
 
+isFunction2HintClick = st.button(buttonNameChange(), on_click=buttonStateCheck())
 
-isClick = st.button("Show hint")
-if(isClick == True):
+if(buttonNameChange() == 'Show Hint'):
     st.markdown("> getFileNameClassNameFilteredResult(className:str,fileName:str)")
     st.markdown("## Sample Input")
     input_str = """
