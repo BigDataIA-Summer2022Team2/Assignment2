@@ -17,7 +17,7 @@ def getNumRandomImageFileNames(num:int):
 
     key = 'csv/combined.csv'
     abs_path = os.path.dirname(os.path.dirname((os.path.abspath(__file__))))
-    csv_path = abs_path+"\\credentials\\aws_s3_credentials.json"
+    csv_path = abs_path+"/credentials/aws_s3_credentials.json"
 
     credentials = json.load(open(csv_path))
 

@@ -28,7 +28,7 @@ import boto3
 def getAircraftPositionFilterResult(xmin=0,ymin=0,xmax=0,ymax=0):
     key = 'csv/combined.csv'
     abs_path = os.path.dirname(os.path.dirname((os.path.abspath(__file__))))
-    csv_path = abs_path+"\\credentials\\aws_s3_credentials.json"
+    csv_path = abs_path+"/credentials/aws_s3_credentials.json"
 
     credentials = json.load(open(csv_path))
 

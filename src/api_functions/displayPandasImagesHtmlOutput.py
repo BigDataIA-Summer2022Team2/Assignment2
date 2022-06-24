@@ -4,7 +4,7 @@ import os
 # @UpdateDate: 6/15/2022
 def getPandasProfilingImageHtmlOutput():
     abs_path = os.path.dirname(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
-    html_file_path=abs_path + "\\notebooks\\pandas_profiling\\pandasprofilingimage.html"
+    html_file_path=abs_path + "/notebooks/pandas_profiling/pandasprofilingimage.html"
 
     HtmlFile = open(html_file_path, 'r', encoding='utf-8')
     response = HtmlFile.read()
