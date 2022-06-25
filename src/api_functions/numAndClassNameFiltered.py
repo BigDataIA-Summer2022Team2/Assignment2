@@ -7,6 +7,9 @@ import boto3
 # @Author: Cheng Wang
 # @UpdateDate: 6/12/2022
 
+"""
+    Type in an integer number, we will show you all files that contains the same number of aircrafs.
+    """
 def getNumAndClassFilteredResult(num,className=""):
     try:
         key = 'csv/combined.csv'

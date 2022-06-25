@@ -6,6 +6,9 @@ import boto3
 # @Description: take class name and file name as input, return information of files that meet those two requirements
 # @Author: Cheng Wang
 # @UpdateDate: 6/12/2022
+"""
+    Type the class name and file name you want to search.
+"""    
 def getFileNameClassNameFilteredResult(className:str,filename:str):
     try:
         key = 'csv/combined.csv'

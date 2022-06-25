@@ -6,6 +6,9 @@ import boto3
 # @Description: return information of files whose size eaual to given width and height
 # @Author: Cheng Wang
 # @UpdateDate: 6/12/2022
+"""
+    Give us the maximum value of the image size, and we will find every image which is in that range.
+    """
 def getimgSizeRangeFilteredResult(width=0,height=0):
     try:
         """

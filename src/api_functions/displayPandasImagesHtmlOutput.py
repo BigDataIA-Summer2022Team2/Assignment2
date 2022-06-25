@@ -2,6 +2,10 @@ import os
 # @Description: show Pandas Profiling img info Html page
 # @Author: Cheng Wang
 # @UpdateDate: 6/15/2022
+
+"""
+    Get the Pandas-Profiling page of our image dataset.
+    """
 def getPandasProfilingImageHtmlOutput():
     abs_path = os.path.dirname(os.path.dirname(os.path.dirname((os.path.abspath(__file__)))))
     html_file_path=abs_path + "/notebooks/pandas_profiling/pandasprofilingimage.html"

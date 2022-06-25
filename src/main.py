@@ -65,6 +65,9 @@ async def inputInfoFilterRequest(filename:Union[str,None]= Query(default="", max
                               ymin:Union[int,None] = Query(default=0),
                               xmax:Union[int,None] = Query(default=0),
                               ymax:Union[int,None] = Query(default=0)):
+    """
+    You can search our files using any parameters below, and we will show you the eligible results.
+    """
     className = className.upper()
 
     response = getS3BucketBody.getS3BucketBodyInfo(filename,width,height,className,xmin,ymin,xmax,ymax) # get return response
@@ -74,6 +77,9 @@ async def inputInfoFilterRequest(filename:Union[str,None]= Query(default="", max
 @app.get("/api/get/fileNameAndClass/")
 async def aircraftClassAndFileNameRequest(className:str,
                               filename:Union[str,None]= Query(default="", max_length=32)):
+        """
+        Type the class name and file name you want to search.
+        """                      
         className = className.upper()
         
         response = fileNameAndClassNameFiltered.getFileNameClassNameFilteredResult(className,filename) # get return response
@@ -83,7 +89,9 @@ async def aircraftClassAndFileNameRequest(className:str,
 @app.get("/api/get/imgSizeRange/")
 async def imgSzieRangeRequest(width:Union[int,None] = Query(default=0),
                               height:Union[int,None] = Query(default=0)):
-    
+    """
+    Give us the maximum value of the image size, and we will find every image which is in that range.
+    """
     response = imgSizeRangeFiltered.getimgSizeRangeFilteredResult(width,height) # get return response
     
     
@@ -95,7 +103,9 @@ async def aircraftPositionRequest(xmin:Union[int,None] = Query(default=0),
                                   ymin:Union[int,None] = Query(default=0),
                                   xmax:Union[int,None] = Query(default=0),
                                   ymax:Union[int,None] = Query(default=0)):
-    
+    """
+    Tell us the coordinate range of the aircraft, and we will show you every aircraft meets your requirement.
+    """
     response = aircraftPositionFilter.getAircraftPositionFilterResult(xmin,ymin,xmax,ymax) # get return response
 
     return  response
@@ -104,7 +114,9 @@ async def aircraftPositionRequest(xmin:Union[int,None] = Query(default=0),
 @app.get('/api/get/allInfo/')
 async def getAllImgInfo():
 
-    
+    """
+    Get all info about our dataset.
+    """
     response = getS3BucketBody.getS3BucketBodyInfo() # get return response
     
     
@@ -115,7 +127,9 @@ async def getAllImgInfo():
 @app.get("/api/get/aircraftNumandClass/")
 async def numAndClassFiteredInfoRequest(num:int,
                                          className:Union[str,None] = Query(default="")):
-    
+    """
+    Type in an integer number, we will show you all files that contains the same number of aircrafs.
+    """
     className = className.upper()
     response = numAndClassNameFiltered.getNumAndClassFilteredResult(num,className)
     
@@ -126,7 +140,9 @@ async def numAndClassFiteredInfoRequest(num:int,
 # get random Num images info
 @app.get("/api/get/random/{num}")
 async def getNumRandomImage(num: int = Path(title="Number of random aircrafts", gt=0, le=9)): 
-
+    """
+    Type in an integer number, we will show you same number of image.
+    """
     response =  getNumRandomImages.getNumRandomImageFileNames(num)
     
         
@@ -138,7 +154,9 @@ async def getNumRandomImage(num: int = Path(title="Number of random aircrafts", 
 @app.get("/pandas/html/csv/", response_class=HTMLResponse)
 async def getPandasCsvOutputHtmlPage():
 
-
+    """
+    Get the Pandas-Profiling page of our csv dataset.
+    """
     response = displayPandasCsvHtmlOutput.getPandasProfilingCsvHtmlOutput()
 
 
@@ -149,14 +167,18 @@ async def getPandasCsvOutputHtmlPage():
 @app.get("/pandas/html/image/", response_class=HTMLResponse)
 async def getPandasImageOutputHtmlPage():
 
-
+    """
+    Get the Pandas-Profiling page of our image dataset.
+    """
     response = displayPandasImagesHtmlOutput.getPandasProfilingImageHtmlOutput()
 
     return response
     
 @app.get("/modelcard/html/", response_class=HTMLResponse)
 async def getModelCardOutputHtmlPage():
-
+    """
+    Get the data card page of our dataset.
+    """
     response = displaymodelcardhtmloutput.displayModelCardHtmlOutput()
 
     return response

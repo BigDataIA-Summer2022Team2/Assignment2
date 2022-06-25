@@ -8,6 +8,10 @@ from api_functions import fileNameFIltered
 # @Description: take a integer number as input, output the infomation about the given number of images
 # @Author: Cheng Wang
 # @UpdateDate: 6/12/2022
+
+"""
+    Type in an integer number, we will show you same number of image.
+    """
 def getNumRandomImageFileNames(num:int):
     try:
         if(num > 9):
