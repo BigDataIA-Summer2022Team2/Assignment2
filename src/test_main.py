@@ -27,12 +27,12 @@ def test_aircraftClassAndFileNameRequest():
 def test_no_found_aircraftClassAndFileNameRequest():
     response = client.get("/api/get/fileNameAndClass/?className=F10")
     assert response.status_code == 200
-    assert response.json() == {}
+    assert response.json() == 'No data Found'
 
 def test_no_found_imgSzieRangeRequest():
     response = client.get("/api/get/imgSizeRange/?width=500&height=500")
     assert response.status_code == 200
-    assert response.json() == {}
+    assert response.json() == 'No data Found'
 
 def test_incorrect_input_imgSzieRangeRequest():
     response = client.get("/api/get/imgSizeRange/?width=abc&height=500")

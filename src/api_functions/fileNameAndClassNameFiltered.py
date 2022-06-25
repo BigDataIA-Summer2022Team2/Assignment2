@@ -10,8 +10,8 @@ def getFileNameClassNameFilteredResult(className:str,filename:str):
     try:
         key = 'csv/combined.csv'
         abs_path = os.path.dirname(os.path.dirname((os.path.abspath(__file__))))
+        #csv_path = abs_path+"/credentials/aws_s3_credentials.json"
         csv_path = abs_path+"/credentials/aws_s3_credentials.json"
-
         credentials = json.load(open(csv_path))
 
         s3_resource = boto3.client(
@@ -47,13 +47,10 @@ def getFileNameClassNameFilteredResult(className:str,filename:str):
                     if(className == '' or className == csv_header_value_list[i][3]):
                         result[str(index_no)] = {}
                         for j in range(len(inner_index_num)): #? 8 elements
-                            result[str((index_no))][header_list[j]] = csv_header_value_list[i][j] # i = 0      |      j = 0 - 7
+                            result[str((index_no))][header_list[j]] = csv_header_value_list[i][j] # i = 0      |      j = 0 - 7  
+        if result == {}:
+            result = "No data Found"
+        return result
     except:
-        print("There are some error in this function, please check your input format")         
-    return result
+        print("There are some error in this function, please check your input format") 
 
-# if __name__ == '__main__':
-#     try:
-#         print(getFileNameClassNameFilteredResult(adfadf,adfadf))
-#     except NameError:
-#         print("Please input correct class name or file name!")

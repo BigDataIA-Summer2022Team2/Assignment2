@@ -58,13 +58,8 @@ def getFileNameCsvInfo(filename: str):
                     for j in range(len(inner_index_num)):  # ? 8 elements
                         # i = 0      |      j = 0 - 7
                         result[str((index_no))][header_list[j]] = csv_header_value_list[i][j]
+        if result == {}:
+            result = "No data Found"                
+        return result
     except:
         print("There are some error in this function, please check your input format") 
-    return result
-
-
-# if __name__ == '__main__':
-#     try:
-#         print(getFileNameCsvInfo(dfasdf))
-#     except NameError:
-#         print("Please input a correct file name!")
