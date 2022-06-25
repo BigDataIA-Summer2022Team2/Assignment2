@@ -1,8 +1,10 @@
 from fastapi.testclient import TestClient
 from src.main import app
+import pytest
+# from pathlib import Path
+# import sys
 
 client = TestClient(app)
-
 
 def test_inputInfoFilterRequest():
     response = client.get("/api/get/infoFilter/?filename=0cd99a9ee135c7618006540f5b6d9b1b")
@@ -110,3 +112,6 @@ def test_aircraftPositionRequest():
     "ymax": "668"
   }
     }
+
+if __name__ == '__main__':
+  pytest.main()
