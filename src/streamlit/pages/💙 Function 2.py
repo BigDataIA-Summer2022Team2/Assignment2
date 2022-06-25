@@ -24,7 +24,7 @@ def getFastAPIResponse(): #data_bin
 if(className != ""):
     st.success("You did it! :heart:")
     st.markdown("## Output Response")
-    url = 'http://204.15.72.120:8000/api/get/fileNameAndClass/' + '?className=' + className + '&filename=' + filename
+    url = 'https://lemonsoldout.top/api/get/fileNameAndClass/' + '?className=' + className + '&filename=' + filename
 
     st.json(getFastAPIResponse())
 else:

@@ -41,7 +41,7 @@ if(width_slider != 0 and height_slider != 0):
     st.success("You did it! :heart:")
     st.markdown("## Output Response")
  
-    url = 'http://204.15.72.120:8000/api/get/imgSizeRange/' + '?width=' + str(width_slider) + '&height=' + str(height_slider)
+    url = 'https://lemonsoldout.top/api/get/imgSizeRange/' + '?width=' + str(width_slider) + '&height=' + str(height_slider)
     st.json(getFastAPIResponse())
 if(width_slider == 0):
     st.warning('Width value is required.')
