@@ -85,12 +85,17 @@ async def aircraftClassAndFileNameRequest(className:str,
         response = fileNameAndClassNameFiltered.getFileNameClassNameFilteredResult(className,filename) # get return response
         return  response
 
-# (width , weight) range and get response
+
 @app.get("/api/get/imgSizeRange/")
 async def imgSzieRangeRequest(width:Union[int,None] = Query(default=0),
                               height:Union[int,None] = Query(default=0)):
     """
-    Give us the maximum value of the image size, and we will find every image which is in that range.
+    It takes in a width and height, and returns a dictionary of all the images in the S3 bucket that are
+    smaller than the width and height
+        
+    :param width: The minimum width of the image, defaults to 0 (optional)
+    
+    :param height: The height of the image you want to filter by, defaults to 0 (optional)
     """
     response = imgSizeRangeFiltered.getimgSizeRangeFilteredResult(width,height) # get return response
     
