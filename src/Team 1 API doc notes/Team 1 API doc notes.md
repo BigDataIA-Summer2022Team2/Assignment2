@@ -19,7 +19,7 @@
 - a original image in Numpy array format
 - a mask of image in Numpy array format
 
-### Error Handeling
+### Error Handling
 
 - If name of image file invalid, return Team 1 custom String
 
@@ -41,7 +41,7 @@
 - return a Numpy array with 2 types of int value: 0,1
 - 0 means no ship, 1 means in this position has ship
 
-### Error Handeling
+### Error Handling
 
 - return a Team 1 custom error message
 
@@ -61,7 +61,7 @@
 
 - one of the images name with "ship" or "noship" condition in the image
 
-### Error Handeling
+### Error Handling
 
 - return Team1 custom error message
 
@@ -81,7 +81,7 @@
 
 - return number of images with certian input number of ships
 
-### Error Handeling
+### Error Handling
 
 - return Team1 custom error message
 
@@ -101,7 +101,7 @@
 
 - return a Numpy array of the image pixels
 
-### Error Handeling
+### Error Handling
 
 - return Team 1 custom error message
 
@@ -121,7 +121,7 @@
 
 - return an integer, count number of ships are in this image
 
-### Error Handeling
+### Error Handling
 
 - return Team1 custom error message
 

@@ -1,4 +1,6 @@
 # API Guide
+- [kaggle dataset](https://www.kaggle.com/datasets/a2015003713/militaryaircraftdetectiondataset)
+- military aircraft images with aircraft type and bounding box annotations 
 
 > ***Tips***
 > - If you start FastAPI on your own machine, default documentation url will be: `http://127.0.0.1:8000/docs`
