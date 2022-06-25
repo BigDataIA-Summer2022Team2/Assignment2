@@ -59,9 +59,8 @@ def getNumAndClassFilteredResult(num,className=""):
                         count_num = 1
                         continue
                 index_no += 1  # ?   +1 record(key+value)
-        # if(result == {}):
-        #     logger.error("No data Found: HTTP 404")
-        #     return {"error":"No data"}
+        if result == {}:
+            result = "No data Found"
+        return result  
     except:
-        print("There are some error in this function, please check your input format")       
-    return result  
+        print("There are some error in this function, please check your input format") 

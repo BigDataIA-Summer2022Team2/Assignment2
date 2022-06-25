@@ -74,11 +74,10 @@ async def inputInfoFilterRequest(filename:Union[str,None]= Query(default="", max
 @app.get("/api/get/fileNameAndClass/")
 async def aircraftClassAndFileNameRequest(className:str,
                               filename:Union[str,None]= Query(default="", max_length=32)):
-    className = className.upper()
-    
-    response = fileNameAndClassNameFiltered.getFileNameClassNameFilteredResult(className,filename) # get return response
+        className = className.upper()
         
-    return  response
+        response = fileNameAndClassNameFiltered.getFileNameClassNameFilteredResult(className,filename) # get return response
+        return  response
 
 # (width , weight) range and get response
 @app.get("/api/get/imgSizeRange/")

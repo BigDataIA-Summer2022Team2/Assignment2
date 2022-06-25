@@ -53,15 +53,10 @@ def getNumRandomImageFileNames(num:int):
         result = {}
         for i in range(len(fileName_list)):
             result["image NO." + str(i+1)] = fileNameFIltered.getFileNameCsvInfo(fileName_list[i])
+        if result == {}:
+            result = "No data Found"    
+        return result
     except:
         print("There are some error in this function, please check your input format") 
-    return result
 
-
-# if __name__ == '__main__':
-#     try:
-#         print(getNumRandomImageFileNames(dfasdf))
-
-#     except NameError:
-#         print("Please input a correct file name!")
 
