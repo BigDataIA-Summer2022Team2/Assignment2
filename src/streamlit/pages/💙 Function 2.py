@@ -2,8 +2,10 @@ import streamlit as st
 import requests
 import time
 
-st.sidebar.markdown("# Function 111")
-st.markdown("# Function 111")
+st.set_page_config(page_title="API Function 2",page_icon=":heart:")
+
+st.sidebar.markdown("# Function 2")
+st.markdown("# Function 2")
 st.markdown("## Try it :smile:")
 
 col1,col2 = st.columns(2)
