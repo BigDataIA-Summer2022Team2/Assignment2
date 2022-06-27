@@ -90,3 +90,5 @@ target/
 
 # log file
 *.log
+
+venv/
