@@ -75,7 +75,7 @@ def getS3BucketBodyInfo(filename="",width=0,height=0,className="",xmin=0,ymin=0,
                 _ymax = int(csv_header_value_list[i][2]) #height
 
             # UnboundedError -----------------------------------------------------------------------
-            xmin_check = xmin <= int(csv_header_value_list[i][4]) < _xmax
+            xmin_check = xmin <= int(csv_header_value_list[i][4]) < _xmax  
             xmax_check = xmin < int(csv_header_value_list[i][6]) <= _xmax
             ymin_check = ymin <= int(csv_header_value_list[i][5]) < _ymax
             ymax_check = ymin < int(csv_header_value_list[i][7]) <= _ymax
