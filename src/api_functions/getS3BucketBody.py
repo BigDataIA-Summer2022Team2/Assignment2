@@ -8,6 +8,25 @@ from log.logger import logger
 # @Author: Cheng Wang
 # @UpdateDate: 6/12/2022
 def getS3BucketBodyInfo(filename="",width=0,height=0,className="",xmin=0,ymin=0,xmax=0,ymax=0):
+    if(filename == None):
+        filename = ""
+    if(width == None):
+        width = 0
+    if(height == None):
+        height = 0
+    if(className == None):
+        className = ""
+    if(xmin == None):
+        xmin = 0
+    if(ymin == None):
+        ymin = 0
+    if(xmax == None):
+        xmax = 0
+    if(ymax == None):
+        ymax = 0
+    
+    className = className.upper()
+    
     key = 'csv/combined.csv'
     abs_path = os.path.dirname(os.path.dirname((os.path.abspath(__file__))))
     csv_path = abs_path+"/credentials/aws_s3_credentials.json"
@@ -55,6 +74,7 @@ def getS3BucketBodyInfo(filename="",width=0,height=0,className="",xmin=0,ymin=0,
             if(ymax == 0):
                 _ymax = int(csv_header_value_list[i][2]) #height
 
+            # UnboundedError -----------------------------------------------------------------------
             xmin_check = xmin <= int(csv_header_value_list[i][4]) < _xmax
             xmax_check = xmin < int(csv_header_value_list[i][6]) <= _xmax
             ymin_check = ymin <= int(csv_header_value_list[i][5]) < _ymax
