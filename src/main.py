@@ -57,61 +57,68 @@ async def log_requests(request: Request, call_next):
 
 # info 8 values for filter and return response
 @app.get("/api/get/infoFilter/")
-async def inputInfoFilterRequest(filename:Union[str,None]= Query(default="", max_length=40),
-                              width:Union[int,None] = Query(default=0),
-                              height:Union[int,None] = Query(default=0),
-                              className:Union[str,None] = Query(default=""),
-                              xmin:Union[int,None] = Query(default=0),
-                              ymin:Union[int,None] = Query(default=0),
-                              xmax:Union[int,None] = Query(default=0),
-                              ymax:Union[int,None] = Query(default=0)):
+async def inputInfoFilterRequest(filename:str=None,
+                              width:int=None,
+                              height:int=None,
+                              className:str=None,
+                              xmin:int=None,
+                              ymin:int=None,
+                              xmax:int=None,
+                              ymax:int=None):
     """
     You can search our files using any parameters below, and we will show you the eligible results.
     """
-    className = className.upper()
     
     response = getS3BucketBody.getS3BucketBodyInfo(filename,width,height,className,xmin,ymin,xmax,ymax) # get return response
     return  response
 
 # fileName , class input and return response
 @app.get("/api/get/fileNameAndClass/")
-async def aircraftClassAndFileNameRequest(className:str,
-                              filename:Union[str,None]= Query(default="", max_length=32)):
+async def aircraftClassAndFileNameFilterRequest(className:str,
+                              filename:str=None):
         """
         Type the class name and file name you want to search.
         """                      
-        className = className.upper()
         
-        response = fileNameAndClassNameFiltered.getFileNameClassNameFilteredResult(className,filename) # get return response
+        width=height=xmin=ymin=xmax=ymax = 0
+        
+        response = getS3BucketBody.getS3BucketBodyInfo(filename,width,height,className,xmin,ymin,xmax,ymax) # get return response
         return  response
 
 
 @app.get("/api/get/imgSizeRange/")
-async def imgSzieRangeRequest(width:Union[int,None] = Query(default=0),
-                              height:Union[int,None] = Query(default=0)):
+async def imgSzieRangeRequest(width:int,
+                              height:int):
     """
     It takes in a width and height, and returns a dictionary of all the images in the S3 bucket that are
     smaller than the width and height
         
-    :param width: The minimum width of the image, defaults to 0 (optional)
+    :param width: The minimum width of the image
     
-    :param height: The height of the image you want to filter by, defaults to 0 (optional)
+    :param height: The height of the image you want to filter by
     """
-    response = imgSizeRangeFiltered.getimgSizeRangeFilteredResult(width,height) # get return response
+
+    xmin=ymin=xmax=ymax = 0
+    filename=className=""
     
+    response = getS3BucketBody.getS3BucketBodyInfo(filename,width,height,className,xmin,ymin,xmax,ymax) # get return response
     
     return  response
 
 # (xmin,ymin,xmax,ymax) range and get response
 @app.get("/api/get/aircraftPositionRange/")
-async def aircraftPositionRequest(xmin:Union[int,None] = Query(default=0),
-                                  ymin:Union[int,None] = Query(default=0),
-                                  xmax:Union[int,None] = Query(default=0),
-                                  ymax:Union[int,None] = Query(default=0)):
+async def aircraftPositionRequest(xmin:int,
+                                  ymin:int,
+                                  xmax:int,
+                                  ymax:int):
     """
     Tell us the coordinate range of the aircraft, and we will show you every aircraft meets your requirement.
     """
-    response = aircraftPositionFilter.getAircraftPositionFilterResult(xmin,ymin,xmax,ymax) # get return response
+    
+    width = height = 0
+    filename = className = ""
+    
+    response = getS3BucketBody.getS3BucketBodyInfo(filename,width,height,className,xmin,ymin,xmax,ymax) # get return response
 
     return  response
 
