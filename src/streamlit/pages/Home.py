@@ -7,6 +7,9 @@ if 'count' not in st.session_state:
 con = pymysql.connect(host="localhost", user="root", password="lemon@123", database="damg7245", charset="utf8")
 
 c = con.cursor()
+
+
+
 def create_usertable():
     c.execute('CREATE TABLE IF NOT EXISTS userstable(username TEXT, password TEXT)')
 
@@ -35,6 +38,7 @@ def view_all_users():
 def home():
     st.markdown("# Main page 🎈")
     st.sidebar.markdown("# Main page 🎈")
+    
 
 def login():
     st.subheader("Login Page")
@@ -44,10 +48,11 @@ def login():
     if st.button("Login"):
         logged_user = login_user(username,password)
         if logged_user:
-            st.sidebar.success("Welcome {}".format(username))
-
-            st.title("After login success, see content!")
-               
+            st.session_state.count +=1
+            if 'runpage' not in st.session_state:
+                st.session_state.runpage = home
+                st.session_state.runpage()
+            
         else:
             st.warning("Your username or password does not exist!")   
     
@@ -57,15 +62,15 @@ def sign_up():
     st.subheader("Sign Up")
     new_user = st.text_input("Username")
     new_password = st.text_input("Password",type = "password")
-
+    isSignUp = st.button("Sign Up")
     if(new_user == None or new_user == ""):
         st.warning("Please do not leave a username blank!")
     elif(new_password == None or new_password == ""):
         st.warning("Please do not leave a password blank!")
     else:
-        st.button("Sign Up")
-        create_usertable()
-        add_userdata(new_user,new_password)
+        if(isSignUp == True):
+            create_usertable()
+            add_userdata(new_user,new_password)
 
     
 

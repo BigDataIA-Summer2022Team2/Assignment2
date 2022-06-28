@@ -1,23 +1,33 @@
 import streamlit as st
 
+def App1page():
+    st.write("Showing app 1")
+    if st.button("Return to Main Page",key = "app1_return_to_main"):
+        st.session_state.runpage = main_page
+        st.experimental_rerun()
+
+def App2page():
+    st.write("Showing app 2")
+    if st.button("Return to Main Page",key="app2_return_to_main"):
+        st.session_state.runpage = main_page
+        st.experimental_rerun()
+
 def main_page():
-    st.markdown("# Main page 🎈")
-    st.sidebar.markdown("# Main page 🎈")
+    st.write("This is my main menu page")
+    btn1 = st.button("Show App1",key="go_to_app1")
+    btn2 = st.button("Show App2",key="go_to_app2")
 
-def page2():
-    st.markdown("# Page 2 ❄️")
-    st.sidebar.markdown("# Page 2 ❄️")
+    if btn1:
+        st.session_state.runpage = App1page
+        st.session_state.runpage()
+        st.experimental_rerun()
 
-def page3():
-    st.markdown("# Page 3 🎉")
-    st.sidebar.markdown("# Page 3 🎉")
-
-page_names_to_funcs = {
-    "Main Page": main_page,
-    "Page 2": page2,
-    "Page 3": page3,
-}
-
-selected_page = st.sidebar.radio("Select a page", page_names_to_funcs.keys(),disabled=False)
-st.sidebar.button("Sign Out")
-page_names_to_funcs[selected_page]()
+    if btn2:
+        st.session_state.runpage = App2page
+        st.session_state.runpage()
+        st.experimental_rerun()
+    if 'runpage' not in st.session_state:
+        st.session_state.runpage = main_page
+        st.session_state.runpage()
+        
+main_page()
