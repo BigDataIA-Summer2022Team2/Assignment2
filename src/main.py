@@ -13,6 +13,7 @@ import logging.config
 from requests import request
 from starlette.concurrency import iterate_in_threadpool
 #from fastapi_log.log_request import LoggingRoute
+#from fastapi_log import dashboard
 
 path = str(Path(Path(__file__).parent.absolute()))
 sys.path.insert(0, path)
@@ -36,7 +37,8 @@ logger = logging.getLogger(__name__)  # the __name__ resolve to "main" since we 
                                       # This will get the root logger since no logger in the configuration has this name.
 
 app = FastAPI()
-
+#app.router.route_class = LoggingRoute
+#app.include_router(dashboard.router)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Home page
@@ -58,7 +60,7 @@ async def log_requests(request: Request, call_next):
     logger.info(f"rid={idem} completed_in={formatted_process_time}ms status_code={response.status_code}")
     response_body = [section async for section in response.body_iterator]
     response.body_iterator = iterate_in_threadpool(iter(response_body))
-    logging.info(f"response_body={response_body[0].decode()}")
+    #logging.info(f"response_body={response_body[0].decode()}")
     
     return response
 
