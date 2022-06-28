@@ -11,6 +11,8 @@ import sys
 import logging
 import logging.config
 from requests import request
+from starlette.concurrency import iterate_in_threadpool
+#from fastapi_log.log_request import LoggingRoute
 
 path = str(Path(Path(__file__).parent.absolute()))
 sys.path.insert(0, path)
@@ -46,12 +48,17 @@ async def home():
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
     idem = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-    logger.info(f"rid={idem} start request path={request.url.path}")
+    params = request.query_params
+    logger.info(f"rid={idem} start request url={request.url}")
+    #logger.info(f"rid={idem} input is:{params}")
     start_time = time.time()
     response = await call_next(request)
     process_time = (time.time() - start_time) * 1000
     formatted_process_time = '{0:.2f}'.format(process_time)
     logger.info(f"rid={idem} completed_in={formatted_process_time}ms status_code={response.status_code}")
+    response_body = [section async for section in response.body_iterator]
+    response.body_iterator = iterate_in_threadpool(iter(response_body))
+    logging.info(f"response_body={response_body[0].decode()}")
     
     return response
 
