@@ -28,13 +28,13 @@ config['cookie']['expiry_days']
 
 with st.sidebar:
     if(st.session_state.authentication_status == True):
-        st.info("User: %s" % st.session_state.username)
+        st.info("User: ***%s***" % st.session_state.username)
         authenticator.logout('Logout')
         
         options = st.multiselect(
             'What log info you want to get?',
-            ['request URL', 'response', 'time', 'status code', 'username'],
-            ['username','request URL', 'status code'],key="log_output_selection")
+            ['request URL', 'response', 'time', 'status code', 'username','log level'],
+            ['username','request URL','status code','log level'],key="log_output_selection")
     
 if(st.session_state.authentication_status == None or st.session_state.authentication_status == False):
     st.header("Please go to ***Home Page and login***!")
@@ -43,7 +43,7 @@ if(st.session_state.authentication_status == True):
     st.markdown("# Log Analysis")
     #st.markdown("## Try it :smile:")
     log_result = [['admin','127.0.0.1:8000/','200']]
-   # print ( "Elephant" in simpDict.values() ) # check if item in dict values
+    #print ( "Elephant" in simpDict.values() ) # check if item in dict values
     
     if("time" in options):
         log_start = st.date_input("Log Sart from",datetime.date(2022, 6, 29),key="log_start",on_change=modify_start_date_to_default)
@@ -69,6 +69,9 @@ if(st.session_state.authentication_status == True):
         log_result[0].append("{'error':'404 not found'}")
     
     
+    if('log level' in options):
+        log_result[0].append('info')
+
     df = pd.DataFrame(log_result, columns = options)
     st.table(df) 
     

@@ -19,7 +19,7 @@ config['cookie']['expiry_days']
 
 with st.sidebar:
     if(st.session_state.authentication_status == True):
-        st.info("User: %s" % st.session_state.username)
+        st.info("User: ***%s***" % st.session_state.username)
         authenticator.logout('Logout')
     
 if(st.session_state.authentication_status == None or st.session_state.authentication_status == False):
