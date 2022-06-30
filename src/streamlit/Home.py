@@ -67,6 +67,7 @@ name, authentication_status, username = authenticator.login('Login','main')
 
 if st.session_state["authentication_status"]:
     #st.sidebar.header(f'Welcome *{st.session_state["name"]}*')
+    #st.balloons()
     homepage()
     
     
