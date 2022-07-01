@@ -1,10 +1,13 @@
+from distutils.log import error
 import random
 import string
-from fastapi import FastAPI, Query, Path, Request
+from fastapi import FastAPI, Query, Path, Request,HTTPException, Depends
 from typing import Union
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.security import OAuth2PasswordBearer
 import time
+from numpy import equal
 from pydantic import BaseModel
 from pathlib import Path
 import sys
@@ -12,6 +15,7 @@ import logging
 import logging.config
 from requests import request
 from starlette.concurrency import iterate_in_threadpool
+
 
 ################################################################
 from datetime import datetime, timedelta
@@ -23,9 +27,14 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 ################################################################
 
+
+from datetime import datetime
+from pydantic import BaseModel
+
+
 #from fastapi_log.log_request import LoggingRoute
 #from fastapi_log import dashboard
-
+import pymysql
 path = str(Path(Path(__file__).parent.absolute()))
 sys.path.insert(0, path)
 from api_functions import getS3BucketBody
@@ -168,6 +177,11 @@ async def read_users_me(current_user: User = Depends(get_current_active_user)):
 
 
 ############################# Logging #################################
+
+# Connect with database
+con = pymysql.connect(host="localhost", user="root", password="1207", database="damg7245", charset="utf8")
+c = con.cursor()
+
 # setup loggers
 logging.config.fileConfig('logging.conf', disable_existing_loggers=False)
 
@@ -180,6 +194,23 @@ logger = logging.getLogger(__name__)  # the __name__ resolve to "main" since we 
 #app.include_router(dashboard.router)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+# class User(BaseModel):
+#     username: str
+#     email: Union[str, None] = None
+#     full_name: Union[str, None] = None
+#     disabled: Union[bool, None] = None
+
+# def fake_decode_token(token):
+#     return User(
+#         username=token + "fakedecoded", email="john@example.com", full_name="John Doe"
+#     )
+
+# async def get_current_user(token: str = Depends(oauth2_scheme)):
+#     user = fake_decode_token(token)
+#     return user
+
 # Home page
 @app.get("/", response_class=HTMLResponse)
 async def home():
@@ -190,17 +221,31 @@ async def home():
 async def log_requests(request: Request, call_next):
     idem = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
     params = request.query_params
-    logger.info(f"rid={idem} start request url={request.url}")
+    #logger.info(f"rid={idem} start request url={request.url}")
     #logger.info(f"rid={idem} input is:{params}")
     start_time = time.time()
+    logTime = datetime.now()
     response = await call_next(request)
     process_time = (time.time() - start_time) * 1000
     formatted_process_time = '{0:.2f}'.format(process_time)
-    logger.info(f"rid={idem} completed_in={formatted_process_time}ms status_code={response.status_code}")
+    logger.info(f"rid={idem} request url={request.url} completed_in={formatted_process_time}ms status_code={response.status_code}")
     response_body = [section async for section in response.body_iterator]
     response.body_iterator = iterate_in_threadpool(iter(response_body))
-    #logging.info(f"response_body={response_body[0].decode()}")
-    
+    message = ("Results Found!")           
+    level=logging.getLevelName(logger.getEffectiveLevel())
+    body = response_body[0].decode("utf-8")
+    if body == '{"detail":"Item not found"}':
+        logger.error("No data Found! please check your input.")
+        level = 'ERROR'
+        message = ("No data Found! please check your input.")
+        
+    if body == '{"detail":"Given number should be less than 10!"}':
+        logger.error("Given number should be less than 10!")
+        level = 'ERROR'
+        message = ("Given number should be less than 10!")
+
+    c.execute('INSERT INTO log_table(logId,userId,level,requestUrl,code,response,logTime,processTime) VALUES(%s,0,%s,%s,%s,%s,%s,%s)',(idem,level,request.url,response.status_code,message,logTime,formatted_process_time))
+    con.commit()
     return response
 
 ############################# Logging #################################
@@ -222,6 +267,7 @@ async def inputInfoFilterRequest(filename:str=None,
     """
     
     response = getS3BucketBody.getS3BucketBodyInfo(filename,width,height,className,xmin,ymin,xmax,ymax) # get return response
+
     return  response
 
 # fileName , class input and return response
@@ -236,6 +282,9 @@ async def aircraftClassAndFileNameFilterRequest(className:str,
         width=height=xmin=ymin=xmax=ymax = 0
         
         response = getS3BucketBody.getS3BucketBodyInfo(filename,width,height,className,xmin,ymin,xmax,ymax) # get return response
+        if response =={"error": "No data Found"}:
+            raise HTTPException(status_code=404, detail="Item not found")
+
         return  response
 
 
@@ -256,7 +305,8 @@ async def imgSzieRangeRequest(width:int,
     filename=className=""
     
     response = getS3BucketBody.getS3BucketBodyInfo(filename,width,height,className,xmin,ymin,xmax,ymax) # get return response
-    
+    if response =={"error": "No data Found"}:
+            raise HTTPException(status_code=404, detail="Item not found")
     return  response
 
 # (xmin,ymin,xmax,ymax) range and get response
@@ -274,7 +324,8 @@ async def aircraftPositionRequest(xmin:int,
     filename = className = ""
     
     response = getS3BucketBody.getS3BucketBodyInfo(filename,width,height,className,xmin,ymin,xmax,ymax) # get return response
-
+    if response =={"error": "No data Found"}:
+            raise HTTPException(status_code=404, detail="Item not found")
     return  response
 
 # No input value and get response(all info)
@@ -301,7 +352,9 @@ async def numAndClassFiteredInfoRequest(num:int,
     className = className.upper()
     response = numAndClassNameFiltered.getNumAndClassFilteredResult(num,className)
     
-        
+    if response =={"error": "No data Found"}:
+            raise HTTPException(status_code=404, detail="Item not found")
+                
     return  response
 
 
@@ -314,7 +367,9 @@ async def getNumRandomImage(num: int = Path(title="Number of random aircrafts", 
     """
     response =  getNumRandomImages.getNumRandomImageFileNames(num)
     
-        
+    if response == {"error": "Given number should be less than 10!"}:
+            raise HTTPException(status_code=404, detail="Given number should be less than 10!")
+               
     return response
 
 ######################### Featured API for display #########################

@@ -15,7 +15,8 @@ from api_functions import fileNameFIltered
 def getNumRandomImageFileNames(num:int):
     try:
         if(num > 9):
-            return {"error": "You should give a number which is less than 10!"}
+            result = {"error": "Given number should be less than 10!"}
+            return result
 
         key = 'csv/combined.csv'
         abs_path = os.path.dirname(os.path.dirname((os.path.abspath(__file__))))
@@ -56,9 +57,7 @@ def getNumRandomImageFileNames(num:int):
         
         result = {}
         for i in range(len(fileName_list)):
-            result["image NO." + str(i+1)] = fileNameFIltered.getFileNameCsvInfo(fileName_list[i])
-        if result == {}:
-            result = "No data Found"    
+            result["image NO." + str(i+1)] = fileNameFIltered.getFileNameCsvInfo(fileName_list[i])  
         return result
     except:
         print("There are some error in this function, please check your input format") 

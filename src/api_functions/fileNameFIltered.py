@@ -59,7 +59,7 @@ def getFileNameCsvInfo(filename: str):
                         # i = 0      |      j = 0 - 7
                         result[str((index_no))][header_list[j]] = csv_header_value_list[i][j]
         if result == {}:
-            result = "No data Found"                
+            result = {"error": "No data Found"}               
         return result
     except:
         print("There are some error in this function, please check your input format") 

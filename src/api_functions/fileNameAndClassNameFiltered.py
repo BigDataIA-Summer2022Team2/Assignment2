@@ -16,7 +16,6 @@ def getFileNameClassNameFilteredResult(className:str,filename:str):
         #csv_path = abs_path+"/credentials/aws_s3_credentials.json"
         csv_path = abs_path+"/credentials/aws_s3_credentials.json"
         credentials = json.load(open(csv_path))
-
         s3_resource = boto3.client(
             service_name=credentials['service_name'],
             region_name=credentials['region_name'],
@@ -52,7 +51,7 @@ def getFileNameClassNameFilteredResult(className:str,filename:str):
                         for j in range(len(inner_index_num)): #? 8 elements
                             result[str((index_no))][header_list[j]] = csv_header_value_list[i][j] # i = 0      |      j = 0 - 7  
         if result == {}:
-            result = "No data Found"
+            result['response'] = {'error':'No data Found'}
         return result
     except:
         print("There are some error in this function, please check your input format") 
