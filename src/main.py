@@ -213,6 +213,8 @@ logger = logging.getLogger(__name__)  # the __name__ resolve to "main" since we 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
+
+
 # Home page
 @app.get("/", response_class=HTMLResponse)
 async def home():
