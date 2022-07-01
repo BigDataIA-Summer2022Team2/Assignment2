@@ -71,15 +71,22 @@ def getS3BucketBodyInfo(filename="",width=0,height=0,className="",xmin=0,ymin=0,
             #xmin ymin xmax ymax check
             if(xmax == 0):
                 _xmax = int(csv_header_value_list[i][1]) #width
+                xmin_check = xmin <= int(csv_header_value_list[i][4]) < _xmax
+                xmax_check = xmin < int(csv_header_value_list[i][6]) <= _xmax
+            else:
+                xmin_check = xmin <= int(csv_header_value_list[i][4]) < xmax
+                xmax_check = xmin < int(csv_header_value_list[i][6]) <= xmax    
             if(ymax == 0):
                 _ymax = int(csv_header_value_list[i][2]) #height
-
-
+                ymin_check = ymin <= int(csv_header_value_list[i][5]) < _ymax
+                ymax_check = ymin < int(csv_header_value_list[i][7]) <= _ymax
+            else:
+                ymin_check = ymin <= int(csv_header_value_list[i][5]) < ymax
+                ymax_check = ymin < int(csv_header_value_list[i][7]) <= ymax
             # UnboundedError -----------------------------------------------------------------------
-            xmin_check = xmin <= int(csv_header_value_list[i][4]) < _xmax  
-            xmax_check = xmin < int(csv_header_value_list[i][6]) <= _xmax
-            ymin_check = ymin <= int(csv_header_value_list[i][5]) < _ymax
-            ymax_check = ymin < int(csv_header_value_list[i][7]) <= _ymax
+              
+            
+            
             
             if(filename == '' or filename == csv_header_value_list[i][0]):
                 if(className == '' or className == csv_header_value_list[i][3]):
@@ -90,7 +97,6 @@ def getS3BucketBodyInfo(filename="",width=0,height=0,className="",xmin=0,ymin=0,
                                 result[str(index_no)][header_list[j]] = csv_header_value_list[i][j] # i = 0      |      j = 0 - 7
     
     if(result == {}):
-        logger.error("No data Found: HTTP 404")
-        return {"error":"No data"} 
+         result['error'] = "No data Found"
     return result
 

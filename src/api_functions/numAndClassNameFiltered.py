@@ -63,7 +63,7 @@ def getNumAndClassFilteredResult(num,className=""):
                         continue
                 index_no += 1  # ?   +1 record(key+value)
         if result == {}:
-            result = "No data Found"
+            result = {"error": "No data Found"}
         return result  
     except:
         print("There are some error in this function, please check your input format") 
