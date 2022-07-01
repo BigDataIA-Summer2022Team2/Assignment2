@@ -1,10 +1,11 @@
 from distutils.log import error
 import random
 import string
-from fastapi import FastAPI, Query, Path, Request,HTTPException
+from fastapi import FastAPI, Query, Path, Request,HTTPException, Depends
 from typing import Union
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi.security import OAuth2PasswordBearer
 import time
 from numpy import equal
 from pydantic import BaseModel
@@ -15,6 +16,7 @@ import logging.config
 from requests import request
 from starlette.concurrency import iterate_in_threadpool
 from datetime import datetime
+from pydantic import BaseModel
 #from fastapi_log.log_request import LoggingRoute
 #from fastapi_log import dashboard
 import pymysql
@@ -42,11 +44,28 @@ logging.config.fileConfig('logging.conf', disable_existing_loggers=False)
 # get root logger
 logger = logging.getLogger(__name__)  # the __name__ resolve to "main" since we are at the root of the project. 
                                       # This will get the root logger since no logger in the configuration has this name.
-    
+
 app = FastAPI()
 #app.router.route_class = LoggingRoute
 #app.include_router(dashboard.router)
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+# class User(BaseModel):
+#     username: str
+#     email: Union[str, None] = None
+#     full_name: Union[str, None] = None
+#     disabled: Union[bool, None] = None
+
+# def fake_decode_token(token):
+#     return User(
+#         username=token + "fakedecoded", email="john@example.com", full_name="John Doe"
+#     )
+
+# async def get_current_user(token: str = Depends(oauth2_scheme)):
+#     user = fake_decode_token(token)
+#     return user
 
 # Home page
 @app.get("/", response_class=HTMLResponse)
@@ -81,7 +100,6 @@ async def log_requests(request: Request, call_next):
         level = 'ERROR'
         message = ("Given number should be less than 10!")
 
-        #raise HTTPException(status_code=404, detail="Given number should be less than 10!") 
     c.execute('INSERT INTO log_table(logId,userId,level,requestUrl,code,response,logTime,processTime) VALUES(%s,0,%s,%s,%s,%s,%s,%s)',(idem,level,request.url,response.status_code,message,logTime,formatted_process_time))
     con.commit()
     return response
