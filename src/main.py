@@ -1,4 +1,5 @@
 from distutils.log import error
+from pickle import GLOBAL
 import random
 import string
 from fastapi import FastAPI, Query, Path, Request,HTTPException, Depends
@@ -15,6 +16,7 @@ import logging
 import logging.config
 from requests import request
 from starlette.concurrency import iterate_in_threadpool
+import json
 
 
 ################################################################
@@ -52,6 +54,9 @@ from api_functions import displaymodelcardhtmloutput
 
 app = FastAPI()
 
+global username
+username = ""
+
 ############################# Auth - JWT #################################
 # > openssl rand -hex 32
 SECRET_KEY = "edbc64950d8b786ceec6e0f5b97aaf95da04c17164ee6fc900c1bd6b516bcfe7"
@@ -64,6 +69,13 @@ fake_users_db = {
         "username": "cheng",
         "full_name": "Cheng Wang",
         "email": "wang.cheng3@northeastern.edu",
+        "hashed_password": "$2b$12$mXOwgkMw7fMDvVe5WMf8M.S16i.97eVmpQRbePhaZ0ISub8BO1yD.",
+        "disabled": False,
+    },
+    "meihu": {
+        "username": "meihu",
+        "full_name": "Meihu Qin",
+        "email": "qin.mei@northeastern.edu",
         "hashed_password": "$2b$12$mXOwgkMw7fMDvVe5WMf8M.S16i.97eVmpQRbePhaZ0ISub8BO1yD.",
         "disabled": False,
     }
@@ -145,6 +157,9 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
 async def get_current_active_user(current_user: User = Depends(get_current_user)):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
+    
+    global username
+    username = current_user.username
     return current_user
 
 
@@ -161,13 +176,14 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     access_token = create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
+    global username
+    username = user.username
     return {"access_token": access_token, "token_type": "bearer"}
 
 
 @app.get("/users/me/", response_model=User)
 async def read_users_me(current_user: User = Depends(get_current_active_user)):
     return current_user
-
 
 # @app.get("/users/me/items/") # Auth Test
 # async def read_own_items(current_user: User = Depends(get_current_active_user)):
@@ -189,27 +205,10 @@ logging.config.fileConfig('logging.conf', disable_existing_loggers=False)
 logger = logging.getLogger(__name__)  # the __name__ resolve to "main" since we are at the root of the project. 
                                       # This will get the root logger since no logger in the configuration has this name.
 
-
 #app.router.route_class = LoggingRoute
 #app.include_router(dashboard.router)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
-# class User(BaseModel):
-#     username: str
-#     email: Union[str, None] = None
-#     full_name: Union[str, None] = None
-#     disabled: Union[bool, None] = None
-
-# def fake_decode_token(token):
-#     return User(
-#         username=token + "fakedecoded", email="john@example.com", full_name="John Doe"
-#     )
-
-# async def get_current_user(token: str = Depends(oauth2_scheme)):
-#     user = fake_decode_token(token)
-#     return user
 
 # Home page
 @app.get("/", response_class=HTMLResponse)
@@ -244,7 +243,7 @@ async def log_requests(request: Request, call_next):
         level = 'ERROR'
         message = ("Given number should be less than 10!")
 
-    c.execute('INSERT INTO log_table(logId,userId,level,requestUrl,code,response,logTime,processTime) VALUES(%s,0,%s,%s,%s,%s,%s,%s)',(idem,level,request.url,response.status_code,message,logTime,formatted_process_time))
+    c.execute('INSERT INTO log_table(logId,userId,level,requestUrl,code,response,logTime,processTime) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)',(idem,username,level,request.url,response.status_code,message,logTime,formatted_process_time))
     con.commit()
     return response
 
@@ -274,17 +273,16 @@ async def inputInfoFilterRequest(filename:str=None,
 @app.get("/api/get/fileNameAndClass/")
 async def aircraftClassAndFileNameFilterRequest(className:str,
                               filename:str=None,
-                              current_user: User = Depends(get_current_active_user),):
+                              current_user: User = Depends(get_current_active_user)):
         """
         Type the class name and file name you want to search.
         """                      
-        
+        idem = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
         width=height=xmin=ymin=xmax=ymax = 0
-        
         response = getS3BucketBody.getS3BucketBodyInfo(filename,width,height,className,xmin,ymin,xmax,ymax) # get return response
         if response =={"error": "No data Found"}:
             raise HTTPException(status_code=404, detail="Item not found")
-
+        
         return  response
 
 
