@@ -7,3 +7,4 @@ passwords = ['meihu','cheng','admin']
 
 hashed_passwords = stauth.Hasher(passwords).generate()
 
+print(hashed_passwords)
