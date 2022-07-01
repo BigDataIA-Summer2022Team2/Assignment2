@@ -14,8 +14,9 @@ from api_functions import fileNameFIltered
     """
 def getNumRandomImageFileNames(num:int):
     try:
-        if(num > 9):
-            result = {"error": "Given number should be less than 10!"}
+        if(num > 9 or num < 0):
+            result = {"error": "Given number should be less than 10 and greater than 0!"}
+            
             return result
 
         key = 'csv/combined.csv'
