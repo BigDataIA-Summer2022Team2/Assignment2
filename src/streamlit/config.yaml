@@ -10,6 +10,6 @@ credentials:
       name: admin
       password: '$2b$12$oMwkDBCi5mUuwsUrQ5JHL.siZaPqgoR3k148AbcX0K2MTi.N10CEe'
 cookie:
-  expiry_days: 1
+  expiry_days: 0.02
   key: some_signature_key
   name: some_cookie_name
