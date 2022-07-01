@@ -22,6 +22,8 @@ def showRandomImg():
                 <h2>Random 5 images Display</h2>
     """
 
+    
+
     html_img=""
 
     file_list = getNumRandomImageFileNames(5)
@@ -71,7 +73,6 @@ def getS3BucketBody(imgName):
     obj = s3_resource.get_object(Bucket = bucket , Key = key)
     body = obj['Body'].read()
     return body
-
 
 
 
