@@ -31,7 +31,7 @@ def homepage():
         - email: wang.cheng3@northeastern.edu
     - Meihu Qin
         - NUID: 002190486
-        - email: 
+        - email: qin.mei@northeastern.edu
     """
 
     st.markdown(markdown_info)
