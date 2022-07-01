@@ -7,7 +7,7 @@ c = con.cursor()
 def create_log_table():
     c.execute('CREATE TABLE IF NOT EXISTS log_table(logId varchar, userId int)') #数据格式问题
     
-#def insert_log_info(logId level, request_url, code, response, logtime, processtime):
+#def insert_log_info(logId,userId, level, requestUrl, code, response, logTime, processTime):
 
 sql = "INSERT INTO log_table(logId,userId,level,requestUrl,code,response,logTime,processTime) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)"
 val = (0,0,0,0,0,0,0,0)

@@ -9,7 +9,7 @@ import base64
 from PIL import Image
 import os
 import requests
-
+import pymysql
 #st.session_state
 
 ###############################################################
@@ -48,9 +48,6 @@ def showHomePageImgCover():
 
 ########################################################################
 
-
-
-
 with open('./config.yaml') as file:
     config = yaml.safe_load(file)
 
@@ -62,12 +59,22 @@ authenticator = stauth.Authenticate(
 )
 
 
+#Todo connect to DB and fastapi login api function
+# 7/1/2022
+# @author cheng
+# con = pymysql.connect(host="localhost", user="root", password="1207", database="damg7245", charset="utf8")
+# c = con.cursor()
+# sql = "INSERT INTO log_table(logId,userId,level,requestUrl,code,response,logTime,processTime) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)" # sql script
+# val = (0,0,0,0,0,0,0,0)
+# c.execute(sql, val)
+# con.commit()
+
 name, authentication_status, username = authenticator.login('Login','main')
 
 
 if st.session_state["authentication_status"]:
     #st.sidebar.header(f'Welcome *{st.session_state["name"]}*')
-    #st.balloons()
+    #st.balloons() # Issue: when refresh page, balloons() function will be called again
     homepage()
     
     
