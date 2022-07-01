@@ -34,8 +34,8 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-#from fastapi_log.log_request import LoggingRoute
-#from fastapi_log import dashboard
+from fastapi_log.log_request import LoggingRoute
+from fastapi_log import dashboard
 import pymysql
 path = str(Path(Path(__file__).parent.absolute()))
 sys.path.insert(0, path)
@@ -56,6 +56,8 @@ app = FastAPI()
 
 global username
 username = ""
+# global accesstoken
+# accesstoken =""
 
 ############################# Auth - JWT #################################
 # > openssl rand -hex 32
@@ -64,22 +66,9 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30 # 30 mins expire
 
 # connect to DB
-fake_users_db = {
-    "cheng": {
-        "username": "cheng",
-        "full_name": "Cheng Wang",
-        "email": "wang.cheng3@northeastern.edu",
-        "hashed_password": "$2b$12$mXOwgkMw7fMDvVe5WMf8M.S16i.97eVmpQRbePhaZ0ISub8BO1yD.",
-        "disabled": False,
-    },
-    "meihu": {
-        "username": "meihu",
-        "full_name": "Meihu Qin",
-        "email": "qin.mei@northeastern.edu",
-        "hashed_password": "$2b$12$mXOwgkMw7fMDvVe5WMf8M.S16i.97eVmpQRbePhaZ0ISub8BO1yD.",
-        "disabled": False,
-    }
-}
+
+con = pymysql.connect(host="localhost", user="root", password="1207", database="damg7245", charset="utf8")
+c = con.cursor()
 
 class Token(BaseModel):
     access_token: str
@@ -108,14 +97,30 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def get_user(db, username: str):
-    if username in db:
-        user_dict = db[username]
+def get_user(username: str):
+    # db connection
+
+    sql_status = c.execute('SELECT username,full_name,email,hashed_password,disabled from user_table WHERE username =%s',(username))
+    if sql_status == 1:
+        sql_result = c.fetchall()[0] # Tuple ("cheng","cheng wang", "xxx@email.com","$2b$12$mXOwgkMw7fMDvVe5WMf8M.S16i.97eVmpQRbePhaZ0ISub8BO1yD.", 0)
+        result = {}
+        result[username] = {}
+        result[username]['username'] = sql_result[0]
+        result[username]['full_name'] = sql_result[1]
+        result[username]['email'] = sql_result[2]
+        result[username]['hashed_password'] = sql_result[3]
+        #result['disabled'] = sql_result[0][4]
+        if sql_result[4] == 0:
+            result[username]['disabled'] = False
+        else:
+            result[username]['disabled'] = True
+        user_dict = result[username]
+
         return UserInDB(**user_dict)
 
 
-def authenticate_user(fake_db, username: str, password: str):
-    user = get_user(fake_db, username)
+def authenticate_user(username: str, password: str):
+    user = get_user(username)
     if not user:
         return False
     if not verify_password(password, user.hashed_password):
@@ -148,7 +153,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         token_data = TokenData(username=username)
     except JWTError:
         raise credentials_exception
-    user = get_user(fake_users_db, username=token_data.username)
+    user = get_user(username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
@@ -165,7 +170,7 @@ async def get_current_active_user(current_user: User = Depends(get_current_user)
 
 @app.post("/token", response_model=Token)
 async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(fake_users_db, form_data.username, form_data.password)
+    user = authenticate_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -178,6 +183,8 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     )
     global username
     username = user.username
+    # global accesstoken
+    # accesstoken = access_token
     return {"access_token": access_token, "token_type": "bearer"}
 
 
@@ -193,10 +200,6 @@ async def read_users_me(current_user: User = Depends(get_current_active_user)):
 
 
 ############################# Logging #################################
-
-# Connect with database
-con = pymysql.connect(host="localhost", user="root", password="1207", database="damg7245", charset="utf8")
-c = con.cursor()
 
 # setup loggers
 logging.config.fileConfig('logging.conf', disable_existing_loggers=False)
@@ -230,21 +233,39 @@ async def log_requests(request: Request, call_next):
     logger.info(f"rid={idem} request url={request.url} completed_in={formatted_process_time}ms status_code={response.status_code}")
     response_body = [section async for section in response.body_iterator]
     response.body_iterator = iterate_in_threadpool(iter(response_body))
-    message = ("Results Found!")           
     level=logging.getLevelName(logger.getEffectiveLevel())
     body = response_body[0].decode("utf-8")
+    message = response_body[0].decode("utf-8")
+    statuscode = response.status_code
     if body == '{"detail":"Item not found"}':
         logger.error("No data Found! please check your input.")
         level = 'ERROR'
         message = ("No data Found! please check your input.")
-        
-    if body == '{"detail":"Given number should be less than 10!"}':
-        logger.error("Given number should be less than 10!")
+        statuscode =status.HTTP_404_NOT_FOUND
+    if body == '{"detail":"Given number should be less than 10 and greater than 0!"}':
+        logger.error("Given number should be less than 10 and greater than 0!")
         level = 'ERROR'
-        message = ("Given number should be less than 10!")
+        message = ("Given number should be less than 10 and greater than 0!")
+        statuscode =status.HTTP_400_BAD_REQUEST
+    
+    if body == '{"detail":"Not authenticated"}':
+        statuscode =status.HTTP_401_UNAUTHORIZED
+        logger.error("Not authenticated.")
+        level = 'ERROR'
+        message = ("Error: Unauthorized.")
+    global username
+    db = con.cursor()
+    if request.url == 'http://127.0.0.1:8000/token' or request.url=='http://127.0.0.1:8000/openapi.json':
+        return response
 
-    c.execute('INSERT INTO log_table(logId,userId,level,requestUrl,code,response,logTime,processTime) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)',(idem,username,level,request.url,response.status_code,message,logTime,formatted_process_time))
-    con.commit()
+    user_status = db.execute('SELECT userId from user_table where username = %s', (username))
+    if user_status != 0:
+        sqlresult = db.fetchall()
+        userId = list(sqlresult)[0][0]
+        db.execute('INSERT INTO log_table(logId,userId,level,requestUrl,code,response,logTime,processTime) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)',(idem,userId,level,request.url,statuscode,message,logTime,formatted_process_time))
+        con.commit()
+        
+        username = ""
     return response
 
 ############################# Logging #################################
@@ -365,8 +386,8 @@ async def getNumRandomImage(num: int = Path(title="Number of random aircrafts", 
     """
     response =  getNumRandomImages.getNumRandomImageFileNames(num)
     
-    if response == {"error": "Given number should be less than 10!"}:
-            raise HTTPException(status_code=404, detail="Given number should be less than 10!")
+    if response == {"error": "Given number should be less than 10 and greater than 0!"}:
+            raise HTTPException(status_code=400, detail="Given number should be less than 10 and greater than 0!")
                
     return response
 
