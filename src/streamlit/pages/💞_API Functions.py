@@ -2,6 +2,7 @@ import streamlit as st
 import streamlit_authenticator as stauth
 import yaml
 import requests
+#from baseDatas import userAgents
 #st.session_state
 st.set_page_config(page_title="API Functions",page_icon=":heart:")
 
@@ -26,9 +27,14 @@ def check_ymax():
 
 
 ##################################################################
-def getFastAPIResponse(url): #data_bin
+def getFastAPIResponse(url,data): #data_bin
     #rlt = requests.post('http://127.0.0.1:8000/api/get/fileNameAndClass/', json=data_bin).json()
-    response = requests.get(url).json()
+    
+    token_str = 'bearer ' + st.session_state["token"]
+    headers = {'accept': 'application/json','authorization': str(token_str)}
+    response = requests.get(url=url,params=data,headers=headers).json()
+    
+
     return response
 ##################################################################
 def function1():
@@ -54,9 +60,17 @@ def function2():
         if(className != ""):
             st.success("You did it! :heart:")
             st.markdown("## Output Response")
-            url = 'https://lemonsoldout.top/api/get/fileNameAndClass/' + '?className=' + className + '&filename=' + filename
+            
+            
+            url = 'http://127.0.0.1:8000/api/get/fileNameAndClass'
+            data = {'className':className,"filename":filename}
+            response = getFastAPIResponse(url,data)
+
+            
+            
+            #response = requests.get(url,headers=header).json()
             with st.expander("See API Response"):
-                st.json(getFastAPIResponse(url))
+                st.json(response)
         else:
             st.warning('Class value is required.')
     if isShowHint:
@@ -123,9 +137,10 @@ def function3():
         if(height== 0):
             st.warning('Height value is required.')
         if(width != 0 and height != 0):
-            url = 'https://lemonsoldout.top/api/get/imgSizeRange/' + '?width=' + str(width) + '&height=' + str(height)
+            url = 'https://lemonsoldout.top/api/get/imgSizeRange/' 
+            data = {"width": str(width), "height": str(height)}#+ '?width=' + str(width) + '&height=' + str(height)
             with st.expander("See API Response"):
-                st.json(getFastAPIResponse(url))
+                st.json(getFastAPIResponse(url,data))
         
     if(isShowHint == True):
         st.markdown("## Sample Input")
@@ -222,9 +237,10 @@ def function4():
         if(st.session_state.xmax < st.session_state.xmin):
             st.warning("xmax value should be greater than xmin value")
         #https://lemonsoldout.top/api/get/aircraftPositionRange/?xmin=400&ymin=200&xmax=600&ymax=500
-        url = 'https://lemonsoldout.top/api/get/aircraftPositionRange/' + '?xmin=' + str(xmin) + '&ymin=' + str(ymin) + '&xmax=' + str(xmax) + '&ymax='+ str(ymax)
+        url = 'https://lemonsoldout.top/api/get/aircraftPositionRange/' 
+        data = {"xmin":str(xmin),"ymin":str(ymin),"xmax":str(xmax),"ymax":str}#+ '?xmin=' + str(xmin) + '&ymin=' + str(ymin) + '&xmax=' + str(xmax) + '&ymax='+ str(ymax)
         with st.expander("See API Response"):
-            st.json(getFastAPIResponse(url))
+            st.json(getFastAPIResponse(url,data))
 
     
     
@@ -293,8 +309,16 @@ def function6():
     if(isClick == True):
         st.write(topN)
 
+def function7():
+    st.markdown("# Function 7 🎉")
+    st.sidebar.markdown("# Function 7 🎉")
+    
+def function8():
+    st.markdown("# Function 8 🎉")
+    st.sidebar.markdown("# Function 8 🎉")
 
-with open('./config.yaml') as file:
+
+with open('./streamlit_config.yaml') as file:
         config = yaml.safe_load(file)
         
 authenticator = stauth.Authenticate(
@@ -311,6 +335,8 @@ func_num = {
     "Function 4": function4,
     "Function 5": function5,
     "Function 6": function6,
+    "Function 7": function7,
+    "Function 8": function8,
 }
 
 

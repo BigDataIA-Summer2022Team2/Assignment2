@@ -48,7 +48,7 @@ def showHomePageImgCover():
 
 ########################################################################
 
-with open('./config.yaml') as file:
+with open('./streamlit_config.yaml') as file:
     config = yaml.safe_load(file)
 
 authenticator = stauth.Authenticate(
@@ -58,16 +58,6 @@ authenticator = stauth.Authenticate(
     config['cookie']['expiry_days']
 )
 
-
-#Todo connect to DB and fastapi login api function
-# 7/1/2022
-# @author cheng
-# con = pymysql.connect(host="localhost", user="root", password="1207", database="damg7245", charset="utf8")
-# c = con.cursor()
-# sql = "INSERT INTO log_table(logId,userId,level,requestUrl,code,response,logTime,processTime) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)" # sql script
-# val = (0,0,0,0,0,0,0,0)
-# c.execute(sql, val)
-# con.commit()
 
 name, authentication_status, username = authenticator.login('Login','main')
 
@@ -86,6 +76,17 @@ elif st.session_state["authentication_status"] == None:
     
 with st.sidebar:
     if(st.session_state.authentication_status == True):
+        
+        headers = {'accept': 'application/json','Content-Type': 'application/x-www-form-urlencoded',}
+        url = 'http://127.0.0.1:8000/token/'
+            
+        data = {'grant_type':'','username': "cheng","password":"cheng",'scope':'','client_id':'','client_secret':''}
+            
+        #res = requests.post(url=url,params=data,headers=headers)
+        res = requests.post(url=url,data=data,headers=headers)
+        token = res.json()["access_token"]
+        
+        st.session_state["token"] = token
         st.info('User: ***%s***' % st.session_state.username)
         authenticator.logout('Logout')
     
