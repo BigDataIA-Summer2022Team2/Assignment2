@@ -58,7 +58,7 @@ def getNumRandomImageFileNames(num:int):
         
         result = {}
         for i in range(len(fileName_list)):
-            result["image NO." + str(i+1)] = fileNameFIltered.getFileNameCsvInfo(fileName_list[i])  
+            result[str(i+1)] = fileName_list[i]  
         return result
     except:
         print("There are some error in this function, please check your input format") 
