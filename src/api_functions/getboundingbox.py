@@ -56,7 +56,7 @@ def getboundingbox(filename):
                 box.append(box_for_each)
                 object = s3_resource.get_object(Bucket = bucket , Key =f'image/{filename}.jpg')
     if box == []:
-        return {"error:", "No data Found!"}
+        return {"error:":"No data Found!"}
     image_dl = object['Body'].read()
     image = Image.open(BytesIO(image_dl))
     transform = transforms.Compose([
