@@ -17,8 +17,8 @@ import logging.config
 from requests import request
 from starlette.concurrency import iterate_in_threadpool
 import json
-
-
+import os
+import yaml
 ################################################################
 from datetime import datetime, timedelta
 from typing import Union
@@ -61,13 +61,41 @@ username = ""
 
 ############################# Auth - JWT #################################
 # > openssl rand -hex 32
-SECRET_KEY = "edbc64950d8b786ceec6e0f5b97aaf95da04c17164ee6fc900c1bd6b516bcfe7"
+
+if os.path.exists("key.txt"):
+    os.remove("key.txt")
+    os.system("openssl rand -hex 32 >> key.txt")
+    f = open("key.txt", "r")
+    key = f.read()
+    
+    f.close()
+else:
+    os.system("openssl rand -hex 32 >> key.txt")
+    f = open("key.txt", "r")
+    key = f.read()
+    f.close()
+
+SECRET_KEY = key
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30 # 30 mins expire
 
 # connect to DB
 
-con = pymysql.connect(host="localhost", user="root", password="1207", database="damg7245", charset="utf8")
+#Todo
+abs_path = os.path.dirname((os.path.abspath(__file__)))
+print(abs_path)
+yaml_path = abs_path + "/mysql.yaml"
+print(os.path.exists(yaml_path))
+
+with open(yaml_path, 'r') as file:
+    config = yaml.safe_load(file)
+#print(config)
+db_host = config['credentials']['host']
+db_user = config['credentials']['user']
+db_password = config['credentials']['password']
+db_database = config['credentials']['database']
+
+con = pymysql.connect(host=db_host, user=db_user, password=db_password, database=db_database, charset="utf8")
 c = con.cursor()
 
 class Token(BaseModel):
@@ -266,7 +294,7 @@ async def log_requests(request: Request, call_next):
     if user_status != 0:
         sqlresult = db.fetchall()
         userId = list(sqlresult)[0][0]
-        db.execute('INSERT INTO log_table(logId,userId,level,requestUrl,code,response,logTime,processTime) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)',(idem,userId,level,request.url,statuscode,message,logTime,formatted_process_time))
+        db.execute('INSERT INTO log_table(logId,userId,level_,requestUrl,code_,response,logTime,processTime) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)',(idem,userId,level,request.url,statuscode,message,logTime,formatted_process_time))
         con.commit()
         
         username = ""
