@@ -2,6 +2,8 @@ import streamlit as st
 import streamlit_authenticator as stauth
 import yaml
 import requests
+import json
+import io
 #from baseDatas import userAgents
 #st.session_state
 st.set_page_config(page_title="API Functions",page_icon=":heart:")
@@ -32,8 +34,7 @@ def getFastAPIResponse(url,data): #data_bin
     
     token_str = 'bearer ' + st.session_state["token"]
     headers = {'accept': 'application/json','authorization': str(token_str)}
-    response = requests.get(url=url,params=data,headers=headers).json()
-    
+    response = requests.get(url=url,params=data,headers=headers,verify=False).json()
 
     return response
 ##################################################################
@@ -327,9 +328,13 @@ def function5():
         url = 'http://127.0.0.1:8000/api/get/aircraftNumandClass/'
         data = {"num":air_num, "className": className}
         response = getFastAPIResponse(url,data)
-        for key, value in response.items():
-            st.write(response[str(key)]["filename"])
+        # for key, value in response.items():
+        #     # url1 = 'http://127.0.0.1:8000/api/get/display/image/'
+        #     # data1 = {"filename":value["filename"]}
+        #     response1 = getFastAPIResponse(url,data)
             
+            #st.write(key,value)
+            # st.json(response1)
             #Todo display image
             
             
@@ -344,7 +349,13 @@ def function6():
     img = st.sidebar.text_input("Input image file name")
     isClick = st.sidebar.button("OK")
     if(isClick == True):
-        st.write(img)
+        url = 'http://127.0.0.1:8000/display/image/'
+        data = {"filename":img}
+        response = getFastAPIResponse(url,data)
+        # b = io.BytesIO()
+        # response.save(b, 'jpeg')
+        # response = b.getvalue()
+        st.json(response)
 
 def function7():
     st.markdown("# Function 7")
@@ -352,7 +363,10 @@ def function7():
     img = st.sidebar.text_input("Input image file name")
     isClick = st.sidebar.button("OK")
     if(isClick == True):
-        st.write(img)
+        url = 'http://127.0.0.1:8000/api/get/getboundingbox/'
+        data = {"filename":img}
+        response = getFastAPIResponse(url,data)
+        st.write(response)
 
 
 with open('./streamlit_config.yaml') as file:
