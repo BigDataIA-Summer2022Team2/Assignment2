@@ -340,7 +340,7 @@ async def inputInfoFilterRequest(filename:str=None,
 
 # fileName , class input and return response
 @app.get("/api/get/fileNameAndClass/")
-async def aircraftClassAndFileNameFilterRequest(className:str,
+async def aircraftClassAndFileNameFilterRequest(className:str=None,
                               filename:str=None,
                               current_user: User = Depends(get_current_active_user)):
         """
@@ -426,7 +426,7 @@ async def numAndClassFiteredInfoRequest(num:int,
 
 
 # get random Num images info
-@app.get("/api/get/random/{num}")
+@app.get("/api/get/random/")
 async def getNumRandomImage(num: int = Path(title="Number of random aircrafts", gt=0, le=9),
                             current_user: User = Depends(get_current_active_user)): 
     """
