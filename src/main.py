@@ -269,7 +269,7 @@ async def log_requests(request: Request, call_next):
     response.body_iterator = iterate_in_threadpool(iter(response_body))
     level=logging.getLevelName(logger.getEffectiveLevel())
     statuscode = response.status_code
-    if response.headers['content-type'] != 'image/jpeg' and response.headers['content-type'] != 'application/json':
+    if response.headers['content-type'] == 'application/json':
         message = response_body[0].decode("utf-8")
         if response_body[0].decode("utf-8") == '{"detail":"Item not found"}':
             logger.error("No data Found! please check your input.")
@@ -287,12 +287,7 @@ async def log_requests(request: Request, call_next):
             level = 'ERROR'
             message = ("Error: Unauthorized.")
     else:
-        if response.headers['content-type'] == 'application/json':
-            logger.error("No data Found! please check your input.")
-            level = 'ERROR'
-            message = "No data Found! Please check your input!"
-            statuscode =status.HTTP_404_NOT_FOUND
-        else:
+        if response.headers['content-type'] == 'image/jpeg':
             message = "Results Found!"
     global username
     db = con.cursor()
@@ -320,7 +315,7 @@ async def getBoundingBox(filename:str,current_user: User = Depends(get_current_a
     
     image = getboundingbox.getboundingbox(filename)
     if image == {"error:", "No data Found!"}:
-        return 'No data Found! Please check your input!'
+        raise HTTPException(status_code=404, detail="Item not found")
     
     return Response(content=image, media_type="image/jpeg")
 
