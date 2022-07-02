@@ -44,6 +44,15 @@ def function1():
     isClick = st.sidebar.button("OK")
     if isClick:
         st.write(randNum)
+        
+        url = 'http://127.0.0.1:8000/api/get/fileNameAndClass'
+        data = {'className':className,"filename":filename}
+        response = getFastAPIResponse(url,data)
+
+        #response = requests.get(url,headers=header).json()
+        with st.expander("See API Response"):
+            st.json(response)
+        
     #Todo: display images
     
 def function2():
@@ -309,13 +318,7 @@ def function6():
     if(isClick == True):
         st.write(topN)
 
-def function7():
-    st.markdown("# Function 7 🎉")
-    st.sidebar.markdown("# Function 7 🎉")
-    
-def function8():
-    st.markdown("# Function 8 🎉")
-    st.sidebar.markdown("# Function 8 🎉")
+
 
 
 with open('./streamlit_config.yaml') as file:
@@ -335,8 +338,6 @@ func_num = {
     "Function 4": function4,
     "Function 5": function5,
     "Function 6": function6,
-    "Function 7": function7,
-    "Function 8": function8,
 }
 
 
