@@ -5,6 +5,9 @@ from boto3 import client
 import boto3
 import base64
 import random
+from PIL import Image
+from io import BytesIO
+import io
 # @Description: display 5 random images
 # @Author: Cheng Wang
 # @UpdateDate: 6/12/2022
@@ -42,7 +45,7 @@ def showRandomImg():
     return response  
 
 
-def getS3BucketBody(imgName):
+def displayImageInHTML(imgName):
     """
     It takes an image name as input, and returns the image body from the S3 bucket
     
@@ -53,26 +56,32 @@ def getS3BucketBody(imgName):
 
     
     #check image
-    
-    key = 'image/' + imgName + '.jpg'
-    
-    abs_path = os.path.dirname(os.path.dirname((os.path.abspath(__file__))))
-    csv_path = abs_path+"/credentials/aws_s3_credentials.json"
+    try:
+        key = 'image/' + imgName + '.jpg'
+        
+        abs_path = os.path.dirname(os.path.dirname((os.path.abspath(__file__))))
+        csv_path = abs_path+"/credentials/aws_s3_credentials.json"
 
-    credentials = json.load(open(csv_path))
+        credentials = json.load(open(csv_path))
 
-    s3_resource = boto3.client(
-        service_name=credentials['service_name'],
-        region_name=credentials['region_name'],
-        aws_access_key_id=credentials['aws_access_key_id'],
-        aws_secret_access_key=credentials['aws_secret_access_key'])
+        s3_resource = boto3.client(
+            service_name=credentials['service_name'],
+            region_name=credentials['region_name'],
+            aws_access_key_id=credentials['aws_access_key_id'],
+            aws_secret_access_key=credentials['aws_secret_access_key'])
 
 
-    bucket = credentials['aws_s3_bucket_name']
+        bucket = credentials['aws_s3_bucket_name']
 
-    obj = s3_resource.get_object(Bucket = bucket , Key = key)
-    body = obj['Body'].read()
-    return body
+        obj = s3_resource.get_object(Bucket = bucket , Key = key)
+        image_dl = obj['Body'].read()
+        image = Image.open(BytesIO(image_dl))
+        b = io.BytesIO()
+        image.save(b, 'jpeg')
+        image = b.getvalue()
+    except:
+        return {"error:", "No data Found!"}
+    return image
 
 
 

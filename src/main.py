@@ -476,10 +476,12 @@ async def getModelCardOutputHtmlPage():
 
 #Todo
 # display random image and its info
-@app.get("/display/image/", response_class=HTMLResponse)
-async def displayImageInHTML():
-
-    return displayImage.showRandomImg()
+@app.get("/display/image/")
+async def displayImageInHTML(imgName:str,current_user: User = Depends(get_current_active_user)):
+    image = displayImage.displayImageInHTML(imgName)
+    if image == {"error:", "No data Found!"}:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return Response(content=image, media_type="image/jpeg")
 
 
 # @Description: input basemodel
