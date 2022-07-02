@@ -253,55 +253,55 @@ async def home():
     response = returnHomePage.getHomePage()
     return response
 
-@app.middleware("http")
-async def log_requests(request: Request, call_next):
-    idem = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-    params = request.query_params
-    #logger.info(f"rid={idem} start request url={request.url}")
-    #logger.info(f"rid={idem} input is:{params}")
-    start_time = time.time()
-    logTime = datetime.now()
-    response = await call_next(request)
-    process_time = (time.time() - start_time) * 1000
-    formatted_process_time = '{0:.2f}'.format(process_time)
-    logger.info(f"rid={idem} request url={request.url} completed_in={formatted_process_time}ms status_code={response.status_code}")
-    response_body = [section async for section in response.body_iterator]
-    response.body_iterator = iterate_in_threadpool(iter(response_body))
-    level=logging.getLevelName(logger.getEffectiveLevel())
-    statuscode = response.status_code
-    if response.headers['content-type'] == 'application/json':
-        message = response_body[0].decode("utf-8")
-        if response_body[0].decode("utf-8") == '{"detail":"Item not found"}':
-            logger.error("No data Found! please check your input.")
-            level = 'ERROR'
-            message = ("No data Found! please check your input.")
-            statuscode =status.HTTP_404_NOT_FOUND
-        if response_body[0].decode("utf-8") == '{"detail":"Given number should be less than 10 and greater than 0!"}':
-            logger.error("Given number should be less than 10 and greater than 0!")
-            level = 'ERROR'
-            message = ("Given number should be less than 10 and greater than 0!")
-            statuscode =status.HTTP_400_BAD_REQUEST
-        if response_body[0].decode("utf-8") == '{"detail":"Not authenticated"}':
-            statuscode =status.HTTP_401_UNAUTHORIZED
-            logger.error("Not authenticated.")
-            level = 'ERROR'
-            message = ("Error: Unauthorized.")
-    else:
-        if response.headers['content-type'] == 'image/jpeg':
-            message = "Results Found!"
-    global username
-    db = con.cursor()
-    if request.url == 'http://127.0.0.1:8000/token/' or request.url=='http://127.0.0.1:8000/openapi.json':
-        return response
+# @app.middleware("http")
+# async def log_requests(request: Request, call_next):
+#     idem = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
+#     params = request.query_params
+#     #logger.info(f"rid={idem} start request url={request.url}")
+#     #logger.info(f"rid={idem} input is:{params}")
+#     start_time = time.time()
+#     logTime = datetime.now()
+#     response = await call_next(request)
+#     process_time = (time.time() - start_time) * 1000
+#     formatted_process_time = '{0:.2f}'.format(process_time)
+#     logger.info(f"rid={idem} request url={request.url} completed_in={formatted_process_time}ms status_code={response.status_code}")
+#     response_body = [section async for section in response.body_iterator]
+#     response.body_iterator = iterate_in_threadpool(iter(response_body))
+#     level=logging.getLevelName(logger.getEffectiveLevel())
+#     statuscode = response.status_code
+#     if response.headers['content-type'] == 'application/json':
+#         message = response_body[0].decode("utf-8")
+#         if response_body[0].decode("utf-8") == '{"detail":"Item not found"}':
+#             logger.error("No data Found! please check your input.")
+#             level = 'ERROR'
+#             message = ("No data Found! please check your input.")
+#             statuscode =status.HTTP_404_NOT_FOUND
+#         if response_body[0].decode("utf-8") == '{"detail":"Given number should be less than 10 and greater than 0!"}':
+#             logger.error("Given number should be less than 10 and greater than 0!")
+#             level = 'ERROR'
+#             message = ("Given number should be less than 10 and greater than 0!")
+#             statuscode =status.HTTP_400_BAD_REQUEST
+#         if response_body[0].decode("utf-8") == '{"detail":"Not authenticated"}':
+#             statuscode =status.HTTP_401_UNAUTHORIZED
+#             logger.error("Not authenticated.")
+#             level = 'ERROR'
+#             message = ("Error: Unauthorized.")
+#     else:
+#         if response.headers['content-type'] == 'image/jpeg':
+#             message = "Results Found!"
+#     global username
+#     db = con.cursor()
+#     if request.url == 'http://127.0.0.1:8000/token/' or request.url=='http://127.0.0.1:8000/openapi.json':
+#         return response
 
-    user_status = db.execute('SELECT userId from user_table where username = %s', (username))
-    if user_status != 0:
-        sqlresult = db.fetchall()
-        userId = list(sqlresult)[0][0]
-        db.execute('INSERT INTO log_table(logId,userId,level_,requestUrl,code_,response,logTime,processTime) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)',(idem,userId,level,request.url,statuscode,message,logTime,formatted_process_time))
-        con.commit()
-        username = ""
-    return response
+#     user_status = db.execute('SELECT userId from user_table where username = %s', (username))
+#     if user_status != 0:
+#         sqlresult = db.fetchall()
+#         userId = list(sqlresult)[0][0]
+#         db.execute('INSERT INTO log_table(logId,userId,level_,requestUrl,code_,response,logTime,processTime) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)',(idem,userId,level,request.url,statuscode,message,logTime,formatted_process_time))
+#         con.commit()
+#         username = ""
+#     return response
 
 ############################# Logging #################################
 
@@ -411,7 +411,7 @@ async def getAllImgInfo():
 # option: class -> input all filtered info contain input class name
 @app.get("/api/get/aircraftNumandClass/")
 async def numAndClassFiteredInfoRequest(num:int,
-                                         className:Union[str,None] = Query(default=""),
+                                         className:str=None,
                                          current_user: User = Depends(get_current_active_user)):
     """
     Type in an integer number, we will show you all files that contains the same number of aircrafs.

@@ -54,13 +54,14 @@ def function1():
             st.json(response)
         
         
-        
-        for i in range(randNum):
-            filename = str(response.get(str(i+1)))
-            data1 = {"filename":filename}
-            url1 = 'http://127.0.0.1:8000/api/get/fileNameAndClass'
-            response1 = getFastAPIResponse(url1,data1)
-            st.json(response1)
+        with st.expander("Here are full images file info",expanded=False):
+            for i in range(randNum):
+                filename = str(response.get(str(i+1)))
+                print(filename)
+                data1 = {"filename":filename}
+                url1 = 'http://127.0.0.1:8000/api/get/fileNameAndClass'
+                response1 = getFastAPIResponse(url1,data1)
+                st.json(response1)
         #Todo display images
         
         
@@ -317,22 +318,41 @@ def function4():
         
 
 def function5():
-    st.markdown("# Function 5 🎉")
-    st.sidebar.markdown("# Function 5 🎉")
+    st.markdown("# Function 5")
+    st.sidebar.markdown("# Function 5")
     air_num = st.sidebar.number_input("Show all images with same input number of aircrafts",1,15,step=1)
     className = st.sidebar.text_input("Please enter aircraft class")
     isClick = st.sidebar.button("OK")
     if(isClick == True):
-        st.write(air_num,className)
+        url = 'http://127.0.0.1:8000/api/get/aircraftNumandClass/'
+        data = {"num":air_num, "className": className}
+        response = getFastAPIResponse(url,data)
+        for key, value in response.items():
+            st.write(response[str(key)]["filename"])
+            
+            #Todo display image
+            
+            
+        with st.expander("See API Function Response"):
+            st.json(response)
+    
+        
+
 def function6():
-    st.markdown("# Function 6 🎉")
-    st.sidebar.markdown("# Function 6 🎉")
-    topN = st.sidebar.number_input("Top Num aircrafts images",1,5,step=1)
+    st.markdown("# Function 6")
+    st.sidebar.markdown("# Function 6")
+    img = st.sidebar.text_input("Input image file name")
     isClick = st.sidebar.button("OK")
     if(isClick == True):
-        st.write(topN)
+        st.write(img)
 
-
+def function7():
+    st.markdown("# Function 7")
+    st.sidebar.markdown("# Function 7")
+    img = st.sidebar.text_input("Input image file name")
+    isClick = st.sidebar.button("OK")
+    if(isClick == True):
+        st.write(img)
 
 
 with open('./streamlit_config.yaml') as file:
@@ -352,6 +372,7 @@ func_num = {
     "Function 4": function4,
     "Function 5": function5,
     "Function 6": function6,
+    "Function 7": function7,
 }
 
 

@@ -9,6 +9,7 @@ from pandas import Series, DataFrame
 import matplotlib.pyplot as plt
 import altair as alt
 import seaborn as sns
+import os
 
 st.session_state
 
@@ -35,7 +36,20 @@ config['cookie']['expiry_days']
 #abs_path
 #con = pymysql.connect(host=db_host, user=db_user, password=db_password, database=db_database, charset="utf8")
 #Todo
-con = pymysql.connect(host='localhost', user='root', password='lemon@123', database='damg7245', charset="utf8")
+abs_path = os.path.dirname((os.path.abspath(__file__)))
+print(abs_path)
+yaml_path = abs_path + "/mysql.yaml"
+print(os.path.exists(yaml_path))
+
+with open(yaml_path, 'r') as file:
+    config = yaml.safe_load(file)
+#print(config)
+db_host = config['credentials']['host']
+db_user = config['credentials']['user']
+db_password = config['credentials']['password']
+db_database = config['credentials']['database']
+
+con = pymysql.connect(host=db_host, user=db_user, password=db_password, database=db_database, charset="utf8")
 c = con.cursor()
 
 with st.sidebar:
