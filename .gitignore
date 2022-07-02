@@ -95,3 +95,5 @@ target/
 venv/
 
 key.txt
+mysql.yaml
+streamlit_config.yaml
