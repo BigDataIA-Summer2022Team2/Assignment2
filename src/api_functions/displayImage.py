@@ -80,7 +80,7 @@ def displayImageInHTML(imgName):
         image.save(b, 'jpeg')
         image = b.getvalue()
     except:
-        return {"error:", "No data Found!"}
+        return {"error:": "No data Found!"}
     return image
 
 
