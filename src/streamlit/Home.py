@@ -78,9 +78,9 @@ with st.sidebar:
     if(st.session_state.authentication_status == True):
         
         headers = {'accept': 'application/json','Content-Type': 'application/x-www-form-urlencoded',}
-        url = 'http://127.0.0.1:8000/token/'
-            
-        data = {'grant_type':'','username': "cheng","password":"cheng",'scope':'','client_id':'','client_secret':''}
+        url = 'http://127.0.0.1:8000/token'
+        
+        data = {'grant_type':'','username': str(username),"password": str(username),'scope':'','client_id':'','client_secret':''}
             
         #res = requests.post(url=url,params=data,headers=headers)
         res = requests.post(url=url,data=data,headers=headers)

@@ -43,17 +43,31 @@ def function1():
     randNum = st.sidebar.number_input("Pick a number of random images",1,9,step=1)
     isClick = st.sidebar.button("OK")
     if isClick:
-        st.write(randNum)
+        #st.write(randNum)
         
-        url = 'http://127.0.0.1:8000/api/get/fileNameAndClass'
-        data = {'className':className,"filename":filename}
+        url = 'http://127.0.0.1:8000/api/get/random/'
+        data = {'num' : randNum}
         response = getFastAPIResponse(url,data)
 
         #response = requests.get(url,headers=header).json()
-        with st.expander("See API Response"):
+        with st.expander("Here are filename list",expanded=True):
             st.json(response)
         
-    #Todo: display images
+        
+        
+        for i in range(randNum):
+            filename = str(response.get(str(i+1)))
+            data1 = {"filename":filename}
+            url1 = 'http://127.0.0.1:8000/api/get/fileNameAndClass'
+            response1 = getFastAPIResponse(url1,data1)
+            st.json(response1)
+        #Todo display images
+        
+        
+        #response = requests.get(url,headers=header).json()
+        # with st.expander("See Full Image files Info Response"):
+        #     st.json(response1)    
+    
     
 def function2():
     st.markdown("# Function 2 ❄️")
