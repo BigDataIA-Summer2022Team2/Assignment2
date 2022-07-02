@@ -19,7 +19,8 @@ from starlette.concurrency import iterate_in_threadpool
 import json
 import os
 import yaml
-################################################################
+from fastapi.responses import Response
+
 from datetime import datetime, timedelta
 from typing import Union
 from fastapi import Depends, FastAPI, HTTPException, status
@@ -50,6 +51,7 @@ from api_functions import getNumRandomImages
 from api_functions import displayImage
 from api_functions import returnHomePage
 from api_functions import displaymodelcardhtmloutput
+from api_functions import getboundingbox
 
 
 app = FastAPI()
@@ -266,25 +268,32 @@ async def log_requests(request: Request, call_next):
     response_body = [section async for section in response.body_iterator]
     response.body_iterator = iterate_in_threadpool(iter(response_body))
     level=logging.getLevelName(logger.getEffectiveLevel())
-    body = response_body[0].decode("utf-8")
-    message = response_body[0].decode("utf-8")
     statuscode = response.status_code
-    if body == '{"detail":"Item not found"}':
-        logger.error("No data Found! please check your input.")
-        level = 'ERROR'
-        message = ("No data Found! please check your input.")
-        statuscode =status.HTTP_404_NOT_FOUND
-    if body == '{"detail":"Given number should be less than 10 and greater than 0!"}':
-        logger.error("Given number should be less than 10 and greater than 0!")
-        level = 'ERROR'
-        message = ("Given number should be less than 10 and greater than 0!")
-        statuscode =status.HTTP_400_BAD_REQUEST
-    
-    if body == '{"detail":"Not authenticated"}':
-        statuscode =status.HTTP_401_UNAUTHORIZED
-        logger.error("Not authenticated.")
-        level = 'ERROR'
-        message = ("Error: Unauthorized.")
+    if response.headers['content-type'] != 'image/jpeg' and response.headers['content-type'] != 'application/json':
+        message = response_body[0].decode("utf-8")
+        if response_body[0].decode("utf-8") == '{"detail":"Item not found"}':
+            logger.error("No data Found! please check your input.")
+            level = 'ERROR'
+            message = ("No data Found! please check your input.")
+            statuscode =status.HTTP_404_NOT_FOUND
+        if response_body[0].decode("utf-8") == '{"detail":"Given number should be less than 10 and greater than 0!"}':
+            logger.error("Given number should be less than 10 and greater than 0!")
+            level = 'ERROR'
+            message = ("Given number should be less than 10 and greater than 0!")
+            statuscode =status.HTTP_400_BAD_REQUEST
+        if response_body[0].decode("utf-8") == '{"detail":"Not authenticated"}':
+            statuscode =status.HTTP_401_UNAUTHORIZED
+            logger.error("Not authenticated.")
+            level = 'ERROR'
+            message = ("Error: Unauthorized.")
+    else:
+        if response.headers['content-type'] == 'application/json':
+            logger.error("No data Found! please check your input.")
+            level = 'ERROR'
+            message = "No data Found! Please check your input!"
+            statuscode =status.HTTP_404_NOT_FOUND
+        else:
+            message = "Results Found!"
     global username
     db = con.cursor()
     if request.url == 'http://127.0.0.1:8000/token' or request.url=='http://127.0.0.1:8000/openapi.json':
@@ -296,13 +305,25 @@ async def log_requests(request: Request, call_next):
         userId = list(sqlresult)[0][0]
         db.execute('INSERT INTO log_table(logId,userId,level_,requestUrl,code_,response,logTime,processTime) VALUES(%s,%s,%s,%s,%s,%s,%s,%s)',(idem,userId,level,request.url,statuscode,message,logTime,formatted_process_time))
         con.commit()
-        
         username = ""
     return response
 
 ############################# Logging #################################
 
 ############################# API Functions #################################
+
+@app.get("/api/get/getboundingbox/")
+async def getBoundingBox(filename:str,current_user: User = Depends(get_current_active_user)):
+    """
+    You can search our files using filename, and we will show you the image with bounding boxes.
+    """
+    
+    image = getboundingbox.getboundingbox(filename)
+    if image == {"error:", "No data Found!"}:
+        return 'No data Found! Please check your input!'
+    
+    return Response(content=image, media_type="image/jpeg")
+
 # info 8 values for filter and return response
 @app.get("/api/get/infoFilter/")
 async def inputInfoFilterRequest(filename:str=None,
