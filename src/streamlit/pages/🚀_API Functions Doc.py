@@ -30,54 +30,39 @@ if(st.session_state.authentication_status == True):
 
   ## API 1: infoFilterRequest
   ### 1.1 Input Value
-  ||filename|width|height|class|xmin|ymin|xmax|ymax|
-  |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-  |Value Type|str|int|int|str|int|int|int|int|
-  |Description|image file name with max 32 length|image width range 0 ~ num|image height range 0 ~ num|aircraft class|aircraft position - xmin coordinate|aircraft position - ymin coordinate|aircraft position - xmax coordinate|aircraft position - ymax coordinate|
-  |isOption|True|True|True|True|True|True|True|True|
-  |Default value|""|0|0|""|0|0|0|0|
-  |Sample value|03c9ba9a9d35977dee2c6841f948296c|2000|1365|F22|686|1014|1028|1200|
+  ||Custom Number|
+  |:-:|:-:|
+  |Value Type|int|
+  |Description|number of images user want to get(0<number<10)|
+  |isOption|False|
+  |Sample value|3|
 
 
   ### 1.2 Sample Request URL
   ```
-  http://127.0.0.1:8000/api/get/infoFilter/?filename=03c9ba9a9d35977dee2c6841f948296c&width=0&height=0&className=F22&xmin=0&ymin=0&xmax=0&ymax=0
+  http://127.0.0.1:8000/api/get/random/?num=3
   ```
 
 
   ```
   curl -X 'GET' \
-    'http://127.0.0.1:8000/api/get/infoFilter/?filename=03c9ba9a9d35977dee2c6841f948296c&width=0&height=0&className=F22&xmin=0&ymin=0&xmax=0&ymax=0' \
-    -H 'accept: application/json'
+  'http://127.0.0.1:8000/api/get/random/?num=3' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtZWlodSIsImV4cCI6MTY1Njc3MTczMX0.s7RrxoRTOPEQitV_FUWc7PYW3eFZNy0vZzbFjtDIELs'
   ```
 
   ### 1.3 Sample Response
   > All return response will be in **Json** format
   > outside number key is the index number in the csv file, not the index of images
+  
   ```json
   {
-    "9": {
-      "filename": "03c9ba9a9d35977dee2c6841f948296c",
-      "width": "2000",
-      "height": "1365",
-      "class": "F22",
-      "xmin": "686",
-      "ymin": "1014",
-      "xmax": "1028",
-      "ymax": "1200"
-    },
-    "10": {
-      "filename": "03c9ba9a9d35977dee2c6841f948296c",
-      "width": "2000",
-      "height": "1365",
-      "class": "F22",
-      "xmin": "1005",
-      "ymin": "440",
-      "xmax": "1485",
-      "ymax": "588"
-    }
-  }
+  "1": "0af3a80affb05a409c3348a3f3c4986e",
+  "2": "0b80bcfce852e6cb449f3c4923dde0a2",
+  "3": "0b8b0ab7f2446360d6ae632a2bdef033"
+}
   ```
+
   ---
   ## API 2: fileNameandClassFilterRequest
 
@@ -115,6 +100,7 @@ if(st.session_state.authentication_status == True):
     }
   }
   ```
+
   ---
   ## API 3: imgSizeRangeFilterRequest
   ### 3.1 Input Value
@@ -125,6 +111,7 @@ if(st.session_state.authentication_status == True):
   |isOption|False|False|
   |Default value|User input required|User input required|
   |Sample value|700|700|
+
   ### 3.2 Sample Request URL
   ```markdown
   http://127.0.0.1:8000/api/get/imgSizeRange/?width=550&height=500
@@ -208,203 +195,88 @@ if(st.session_state.authentication_status == True):
   }
   ```
   ---
-  ## API 5: allInfoRequest
+  ## API 5: aircraftNumandClass
   ### 5.1 Input Value
-  - No need user input
-  - It will directly return all images info
+  ||class|Num|
+  |:-:|:-:|:-:|
+  |Value Type|str|int|
+  |Description|aircraft class|how many aircrafts user wants to see in this image|
+  |isOption|True|False|
+  |Default value|User input required|""|
+  |Sample value|F16|3|
+  
+  
   ### 5.2 Sample Request URL
   ```markdown
-  http://127.0.0.1:8000/api/get/allInfo/
+  http://127.0.0.1:8000/api/get/aircraftNumandClass/?num=3&className=F16
   ```
 
   ```markdown
   curl -X 'GET' \
-    'http://127.0.0.1:8000/api/get/allInfo/' \
-    -H 'accept: application/json'
+  'http://127.0.0.1:8000/api/get/aircraftNumandClass/?num=3&className=F16'\
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtZWlodSIsImV4cCI6MTY1Njc3MTczMX0.s7RrxoRTOPEQitV_FUWc7PYW3eFZNy0vZzbFjtDIELs'
   ```
   ### 5.3 Sample Response
   ```json
+
   {
-    "1": {
-      "filename": "00b2add164cb42440a52064e390ea3d2",
-      "width": "1280",
-      "height": "850",
-      "class": "B1",
-      "xmin": "322",
-      "ymin": "112",
-      "xmax": "893",
-      "ymax": "618"
-    },
-    "2": {
-      "filename": "00b627cb5578bb036edb01cdcf7b56d9",
-      "width": "1300",
-      "height": "867",
-      "class": "F35",
-      "xmin": "607",
-      "ymin": "204",
-      "xmax": "1202",
-      "ymax": "529"
-    },
-    ...
+  "97": {
+    "filename": "2cc2da26e5c852e86339633fdffccbba",
+    "class": "F16",
+    "count": 3
   }
+}
+  
   ```
   ---
-  ## API 6: aircraftNumandClassFilterRequest
+  ## API 6: displayImage
   ### 6.1 Input Value
-  ||num|class|
-  |:-:|:-:|:-:|
-  |Value Type|int|int|
-  |Description|number of aircrafts in 1 image|specific aircraft class required|
-  |isOption|False|True|
-  |Default value|User input required|""|
-  |Sample value|3|F22|
+  ||filename|
+  |:-:|:-:|
+  |Value Type|str|
+  |Description|image filename|
+  |isOption|False|
+  |Default value|User input required|
+  |Sample value|2cc2da26e5c852e86339633fdffccbba|
 
   ### 6.2 Sample Request URL
   ```markdown
-  http://127.0.0.1:8000/api/get/aircraftNumandClass/?num=3&className=F22
+  http://127.0.0.1:8000/display/image/?imgName=2cc2da26e5c852e86339633fdffccbba
   ```
 
   ```markdown
   curl -X 'GET' \
-    'http://127.0.0.1:8000/api/get/aircraftNumandClass/?num=3&className=F22' \
-    -H 'accept: application/json''
+  'http://127.0.0.1:8000/display/image/?imgName=2cc2da26e5c852e86339633fdffccbba' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtZWlodSIsImV4cCI6MTY1Njc3MTczMX0.s7RrxoRTOPEQitV_FUWc7PYW3eFZNy0vZzbFjtDIELs'
   ```
   ### 6.3 Sample Response
-  ```json
-  {
-    "35": {
-      "filename": "0e5c0f6d779768a0380765a04b938f7a",
-      "class": "F22",
-      "count": 3
-    },
-    "106": {
-      "filename": "2dc47416b142bcd4b709011e80ece4eb",
-      "class": "F22",
-      "count": 3
-    }
-  }
-  ```
+  - return image
+
   ---
-  ## API 7: displayRandomNumImages
+  ## API 7: displayboundingbox
   ### 7.1 Input Value
-  ||num|
+  ||filename|
   |:-:|:-:|
-  |Value Type|int|
-  |Description|number of random images|
+  |Value Type|str|
+  |Description|image filename|
   |isOption|False|
   |Default value|User input required|
-  |Sample value|2|
+  |Sample value|2cc2da26e5c852e86339633fdffccbba|
 
   ### 7.2 Sample Request URL
   ```markdown
-  http://127.0.0.1:8000/api/get/random/2
+  http://127.0.0.1:8000/api/get/getboundingbox/?filename=2cc2da26e5c852e86339633fdffccbba
   ```
 
   ```markdown
   curl -X 'GET' \
-    'http://127.0.0.1:8000/api/get/random/2' \
-    -H 'accept: application/json'
+  'http://127.0.0.1:8000/api/get/getboundingbox/?filename=2cc2da26e5c852e86339633fdffccbba' \
+  -H 'accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtZWlodSIsImV4cCI6MTY1Njc3MTczMX0.s7RrxoRTOPEQitV_FUWc7PYW3eFZNy0vZzbFjtDIELs'
 
   ```
-  ### 7.3 Sample Response
-  ```json
-  {
-    "image NO.1": {
-      "230": {
-        "filename": "3b8c81155b8c537d88d2275dd4dae803",
-        "width": "1870",
-        "height": "1227",
-        "class": "B2",
-        "xmin": "133",
-        "ymin": "654",
-        "xmax": "507",
-        "ymax": "956"
-      },
-      "231": {
-        "filename": "3b8c81155b8c537d88d2275dd4dae803",
-        "width": "1870",
-        "height": "1227",
-        "class": "B2",
-        "xmin": "1336",
-        "ymin": "383",
-        "xmax": "1682",
-        "ymax": "674"
-      },
-      "232": {
-        "filename": "3b8c81155b8c537d88d2275dd4dae803",
-        "width": "1870",
-        "height": "1227",
-        "class": "F35",
-        "xmin": "987",
-        "ymin": "740",
-        "xmax": "1227",
-        "ymax": "811"
-      },
-      "233": {
-        "filename": "3b8c81155b8c537d88d2275dd4dae803",
-        "width": "1870",
-        "height": "1227",
-        "class": "F35",
-        "xmin": "1041",
-        "ymin": "286",
-        "xmax": "1292",
-        "ymax": "356"
-      }
-    },
-    "image NO.2": {
-      "234": {
-        "filename": "3b9882c439ae0a2592b3ebe044dd44df",
-        "width": "1000",
-        "height": "714",
-        "class": "V22",
-        "xmin": "22",
-        "ymin": "68",
-        "xmax": "953",
-        "ymax": "545"
-      }
-    }
-  }
-  ```
-  ---
-  ## API 8: displayImageInHTML
-  ### 8.1 Input Value
-  - No need user input
-  ### 8.2 Sample Request URL
-  - Pass
-  ### 8.3 Sample Response
-  - It will return a String format image data which can be display in Base64 format in HTML web page.
-  ---
-  ## API 9: displayImageWithAircraftBlock
-  ### 9.1 Input Value
-  - No need user input
-  ### 9.2 Sample Request URL
-  - Pass
-  ### 9.3 Sample Response
-  - It will return a String format image data(whole image with aircraft position colored block) which can be display in Base64 format in HTML web page.
-  ---
-  ## API 10: displayAircraftOnly
-  ### 10.1 Input Value
-  - No need user input
-  ### 10.2 Sample Request URL
-  - Pass
-  ### 10.3 Sample Response
-  - It will return a String format image data(aircraft only) which can be display in Base64 format in HTML web page.
-  ---
-  ## API 11: displayDataCard
-  ### 11.1 Input Value
-  - No need user input
-  ### 11.2 Sample Request URL
-  - Pass
-  ### 11.3 Sample Response
-  - It will return a HTML format page info
-  ---
-  ## API 12: displayPandasProfiling
-  ### 12.1 Input Value
-  - No need user input
-  ### 12.2 Sample Request URL
-  - Pass
-  ### 12.3 Sample Response
-  - It will return a HTML format page info
   """
 
   st.markdown(guide_info)
