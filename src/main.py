@@ -83,7 +83,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30 # 30 mins expire
 
 # connect to DB
 
-#Todo
+
 abs_path = os.path.dirname((os.path.abspath(__file__)))
 print(abs_path)
 yaml_path = abs_path + "/mysql.yaml"
@@ -296,7 +296,7 @@ async def log_requests(request: Request, call_next):
             message = "Results Found!"
     global username
     db = con.cursor()
-    if request.url == 'http://127.0.0.1:8000/token' or request.url=='http://127.0.0.1:8000/openapi.json':
+    if request.url == 'http://127.0.0.1:8000/token/' or request.url=='http://127.0.0.1:8000/openapi.json':
         return response
 
     user_status = db.execute('SELECT userId from user_table where username = %s', (username))
